@@ -23,7 +23,7 @@ interface StudentClassSectionProps {
 
 export const StudentClassSection = ({ student }: StudentClassSectionProps) => {
   const classItem = useQuery(api.classes.getById, { id: student.classId });
-  const grade = useQuery(api.grades.getById, { id: classItem?.gradeId });
+  const grade = useQuery(api.grades.getById, { id: classItem?.gradeId }, { enabled: !!classItem?.gradeId });
   const assignments = useQuery(api.classAssignments.getByClass, { classId: student.classId });
   const teachers = useQuery(api.teachers.getActive);
 
