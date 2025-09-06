@@ -181,7 +181,11 @@ export const GoalForm = ({ goal, initialStudentId, onSuccess, onCancel }: GoalFo
 
           <div className="space-y-2">
             <Label htmlFor="status" className="text-gray-300">Status</Label>
-            <Select value={status} onValueChange={setStatus} disabled={isLoading}>
+            <Select 
+              value={status} 
+              onValueChange={(value) => setStatus(value as "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "ON_HOLD" | "CANCELLED")} 
+              disabled={isLoading}
+            >
               <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                 <SelectValue placeholder="Select a status" />
               </SelectTrigger>
