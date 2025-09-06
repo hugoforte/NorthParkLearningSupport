@@ -4,32 +4,81 @@
 
 The NorthPark Learning Support application uses Convex as the datastore and ORM with the following core entities:
 
-- **Users** (Teachers)
+- **Teachers** (Staff members)
 - **Grades** (K-9)
 - **Classes** (belong to grades)
+- **ClassAssignments** (link teachers to classes)
 - **Students** (belong to classes)
 - **Notes** (created by teachers about students)
 
 ## Entity Relationship Diagram
 
+```mermaid
+erDiagram
+    TEACHERS {
+        string _id PK
+        string firstName
+        string lastName
+        boolean isActive
+        number _creationTime
+    }
+    
+    GRADES {
+        string _id PK
+        string name
+        number level
+        string description
+        boolean isActive
+        number _creationTime
+    }
+    
+    CLASSES {
+        string _id PK
+        string name
+        string gradeId FK
+        string description
+        boolean isActive
+        number _creationTime
+    }
+    
+    CLASS_ASSIGNMENTS {
+        string _id PK
+        string teacherId FK
+        string classId FK
+        string role
+        number _creationTime
+    }
+    
+    STUDENTS {
+        string _id PK
+        string firstName
+        string lastName
+        string classId FK
+        string studentId
+        number dateOfBirth
+        boolean isActive
+        number _creationTime
+    }
+    
+    NOTES {
+        string _id PK
+        string studentId FK
+        string authorId FK
+        string category
+        string content
+        boolean isPrivate
+        number _creationTime
+    }
+    
+    TEACHERS ||--o{ CLASS_ASSIGNMENTS : "assigned to"
+    CLASSES ||--o{ CLASS_ASSIGNMENTS : "has teachers"
+    GRADES ||--o{ CLASSES : "contains"
+    CLASSES ||--o{ STUDENTS : "enrolls"
+    STUDENTS ||--o{ NOTES : "has notes"
+    TEACHERS ||--o{ NOTES : "creates"
 ```
-Users (Teachers)
-    │
-    │ (1:N)
-    │
-    ▼
-ClassAssignments
-    │
-    │ (N:1)
-    │
-    ▼
-Classes ────── (1:N) ────── Students
-    │                           │
-    │ (N:1)                     │ (1:N)
-    │                           │
-    ▼                           ▼
-Grades                      Notes
-```
+
+**Note**: Convex automatically adds `_creationTime` to the end of every index, so it should not be explicitly included in index definitions. For example, the `by_student_created` index on the NOTES table only includes `["studentId"]` in the definition, but Convex automatically appends `_creationTime` for sorting.
 
 ## Convex Schema Definitions
 

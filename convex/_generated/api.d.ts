@@ -13,6 +13,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as classes from "../classes.js";
+import type * as grades from "../grades.js";
+import type * as migrations from "../migrations.js";
 import type * as teachers from "../teachers.js";
 
 /**
@@ -24,6 +27,9 @@ import type * as teachers from "../teachers.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  classes: typeof classes;
+  grades: typeof grades;
+  migrations: typeof migrations;
   teachers: typeof teachers;
 }>;
 export declare const api: FilterApi<
