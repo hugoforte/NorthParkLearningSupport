@@ -16,12 +16,8 @@ export default defineSchema({
   teachers: defineTable({
     firstName: v.string(),
     lastName: v.string(),
-    email: v.string(),
-    phone: v.optional(v.string()),
-    image: v.optional(v.string()),
     isActive: v.boolean(),
   })
-    .index("by_email", ["email"])
     .index("by_active", ["isActive"])
     .index("by_name", ["lastName", "firstName"]),
 });
