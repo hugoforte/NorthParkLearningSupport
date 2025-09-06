@@ -1,9 +1,15 @@
-- [ ] Make it deploy (Vercel)
-- [ ] Scaffold basic ui with mock data
+- [x] Make it deploy (Vercel)
+- [ ] Scaffold basic ui with mock data for listing teachers
 - [ ] Actually set up a database
-- [ ] Attach database to UI
+- [ ] Attach database to UI (fetch actual teachers)
 - [ ] Add Authentication (BetterAuth + Convex)
 - [ ] Add Analytics (Posthog)
 - [ ] Add Logging
-- [ ] Add Profile Page where you can update your user
+- [ ] Add Profile Page where you can update your user (who is a teacher)
+- [ ] Add admin portal where you can set up users
+- [ ] Add "Add Class" functionality to admin
+- [ ] Add "Add Student" functionality to admin
+- [ ] Add Add Note functionality
+- [ ] Add Report - view all notes
+- [ ] Add Report - view all notes filters (By Teacher, Student, Class, Grade)
 
