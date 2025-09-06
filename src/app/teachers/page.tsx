@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { TeacherList } from '@/components/teachers/teacher-list';
+import { TeacherList } from "@/components/teachers/teacher-list";
 
 export default function TeachersPage() {
   return (

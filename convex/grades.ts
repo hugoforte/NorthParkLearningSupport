@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all grades
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("grades")
-      .collect();
+    return await ctx.db.query("grades").collect();
   },
 });
 
@@ -69,7 +67,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const grade = await ctx.db.get(id);
     if (!grade) {
       throw new Error("Grade not found");

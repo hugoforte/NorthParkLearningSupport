@@ -22,7 +22,7 @@ erDiagram
         boolean isActive
         number _creationTime
     }
-    
+
     GRADES {
         string _id PK
         string name
@@ -31,7 +31,7 @@ erDiagram
         boolean isActive
         number _creationTime
     }
-    
+
     CLASSES {
         string _id PK
         string name
@@ -40,7 +40,7 @@ erDiagram
         boolean isActive
         number _creationTime
     }
-    
+
     CLASS_ASSIGNMENTS {
         string _id PK
         string teacherId FK
@@ -48,7 +48,7 @@ erDiagram
         string role
         number _creationTime
     }
-    
+
     STUDENTS {
         string _id PK
         string firstName
@@ -59,7 +59,7 @@ erDiagram
         boolean isActive
         number _creationTime
     }
-    
+
     NOTES {
         string _id PK
         string studentId FK
@@ -69,7 +69,7 @@ erDiagram
         boolean isPrivate
         number _creationTime
     }
-    
+
     TEACHERS ||--o{ CLASS_ASSIGNMENTS : "assigned to"
     CLASSES ||--o{ CLASS_ASSIGNMENTS : "has teachers"
     GRADES ||--o{ CLASSES : "contains"
@@ -108,6 +108,7 @@ export default defineSchema({
 ```
 
 **Fields**:
+
 - `_id`: Unique identifier (Convex-generated)
 - `email`: Teacher's email address (unique, used for login)
 - `name`: Teacher's full name
@@ -119,6 +120,7 @@ export default defineSchema({
 - `_creationTime`: Account creation timestamp (Convex auto-generated)
 
 **Relationships**:
+
 - One-to-many with ClassAssignments
 - One-to-many with Notes
 
@@ -139,6 +141,7 @@ grades: defineTable({
 ```
 
 **Fields**:
+
 - `_id`: Unique identifier (Convex-generated)
 - `name`: Human-readable grade name
 - `level`: Numeric level (0 for Kindergarten, 1-9 for grades)
@@ -147,22 +150,29 @@ grades: defineTable({
 - `_creationTime`: Creation timestamp (Convex auto-generated)
 
 **Relationships**:
+
 - One-to-many with Classes
 
 **Sample Data**:
+
 ```typescript
 // convex/seed.ts
 export const seedGrades = [
-  { name: 'Kindergarten', level: 0, description: 'Pre-school grade', isActive: true },
-  { name: '1st Grade', level: 1, description: 'First grade', isActive: true },
-  { name: '2nd Grade', level: 2, description: 'Second grade', isActive: true },
-  { name: '3rd Grade', level: 3, description: 'Third grade', isActive: true },
-  { name: '4th Grade', level: 4, description: 'Fourth grade', isActive: true },
-  { name: '5th Grade', level: 5, description: 'Fifth grade', isActive: true },
-  { name: '6th Grade', level: 6, description: 'Sixth grade', isActive: true },
-  { name: '7th Grade', level: 7, description: 'Seventh grade', isActive: true },
-  { name: '8th Grade', level: 8, description: 'Eighth grade', isActive: true },
-  { name: '9th Grade', level: 9, description: 'Ninth grade', isActive: true },
+  {
+    name: "Kindergarten",
+    level: 0,
+    description: "Pre-school grade",
+    isActive: true,
+  },
+  { name: "1st Grade", level: 1, description: "First grade", isActive: true },
+  { name: "2nd Grade", level: 2, description: "Second grade", isActive: true },
+  { name: "3rd Grade", level: 3, description: "Third grade", isActive: true },
+  { name: "4th Grade", level: 4, description: "Fourth grade", isActive: true },
+  { name: "5th Grade", level: 5, description: "Fifth grade", isActive: true },
+  { name: "6th Grade", level: 6, description: "Sixth grade", isActive: true },
+  { name: "7th Grade", level: 7, description: "Seventh grade", isActive: true },
+  { name: "8th Grade", level: 8, description: "Eighth grade", isActive: true },
+  { name: "9th Grade", level: 9, description: "Ninth grade", isActive: true },
 ];
 ```
 
@@ -183,6 +193,7 @@ classes: defineTable({
 ```
 
 **Fields**:
+
 - `_id`: Unique identifier (Convex-generated)
 - `name`: Class name or identifier
 - `gradeId`: Reference to grades table
@@ -191,6 +202,7 @@ classes: defineTable({
 - `_creationTime`: Creation timestamp (Convex auto-generated)
 
 **Relationships**:
+
 - Many-to-one with Grades
 - One-to-many with Students
 - Many-to-many with Users (through ClassAssignments)
@@ -212,6 +224,7 @@ classAssignments: defineTable({
 ```
 
 **Fields**:
+
 - `_id`: Unique identifier (Convex-generated)
 - `userId`: Reference to users table
 - `classId`: Reference to classes table
@@ -219,6 +232,7 @@ classAssignments: defineTable({
 - `_creationTime`: Assignment creation timestamp (Convex auto-generated)
 
 **Relationships**:
+
 - Many-to-one with Users
 - Many-to-one with Classes
 
@@ -242,6 +256,7 @@ students: defineTable({
 ```
 
 **Fields**:
+
 - `_id`: Unique identifier (Convex-generated)
 - `firstName`: Student's first name
 - `lastName`: Student's last name
@@ -252,6 +267,7 @@ students: defineTable({
 - `_creationTime`: Creation timestamp (Convex auto-generated)
 
 **Relationships**:
+
 - Many-to-one with Classes
 - One-to-many with Notes
 
@@ -281,6 +297,7 @@ notes: defineTable({
 ```
 
 **Fields**:
+
 - `_id`: Unique identifier (Convex-generated)
 - `studentId`: Reference to students table
 - `authorId`: Reference to users table (teacher who created the note)
@@ -290,6 +307,7 @@ notes: defineTable({
 - `_creationTime`: Note creation timestamp (Convex auto-generated)
 
 **Relationships**:
+
 - Many-to-one with Students
 - Many-to-one with Users (author)
 
@@ -361,7 +379,7 @@ export default defineSchema({
       v.literal("BEHAVIOR"),
       v.literal("SOCIAL"),
       v.literal("HEALTH"),
-      v.literal("OTHER")
+      v.literal("OTHER"),
     ),
     content: v.string(),
     isPrivate: v.boolean(),
@@ -413,24 +431,28 @@ Convex automatically creates indexes based on the schema definitions above. The 
 ## Data Validation Rules
 
 ### User Validation
+
 - Email must be valid format and unique
 - Name must be at least 2 characters
 - Role must be 'teacher' or 'admin'
 - Password hash required for non-OAuth users
 
 ### Student Validation
+
 - First and last names required
 - Must belong to an active class
 - Student ID must be unique within school (if provided)
 - Date of birth must be valid date
 
 ### Note Validation
+
 - Content must be at least 10 characters
 - Category must be valid enum value
 - Student and author must exist and be active
 - Content cannot exceed 10,000 characters
 
 ### Class Validation
+
 - Name must be unique within grade
 - Must belong to an active grade
 - Name must be at least 2 characters
@@ -438,6 +460,7 @@ Convex automatically creates indexes based on the schema definitions above. The 
 ## Sample Data
 
 ### Grades
+
 ```sql
 INSERT INTO grades (id, name, level, description) VALUES
 ('grade-k', 'Kindergarten', 0, 'Pre-school grade'),
@@ -453,6 +476,7 @@ INSERT INTO grades (id, name, level, description) VALUES
 ```
 
 ### Sample Classes
+
 ```sql
 INSERT INTO classes (id, name, grade_id, description) VALUES
 ('class-k-a', 'Kindergarten A', 'grade-k', 'Morning kindergarten class'),
@@ -527,12 +551,14 @@ export const update = mutation({
 ## Migration Strategy
 
 ### Initial Setup
+
 1. Define schema in `convex/schema.ts`
 2. Create seed data functions for grades (K-9)
 3. Deploy schema to Convex
 4. Run seed functions to populate initial data
 
 ### Future Schema Changes
+
 - Add new fields to existing tables
 - Create new tables as needed
 - Add new indexes for performance
@@ -541,16 +567,19 @@ export const update = mutation({
 ## Data Security Considerations
 
 ### Access Control
+
 - Teachers can only access their assigned classes
 - Notes are private to the author unless marked otherwise
 - Admin users have full access to all data
 
 ### Data Encryption
+
 - Sensitive data encrypted at rest
 - All communications over HTTPS
 - Password hashes use bcrypt with salt
 
 ### Audit Trail
+
 - All data modifications logged
 - User actions tracked for security
 - Regular backup and recovery procedures

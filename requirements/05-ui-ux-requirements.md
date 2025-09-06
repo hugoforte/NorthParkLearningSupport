@@ -5,6 +5,7 @@
 The NorthPark Learning Support application follows a clean, professional design system optimized for educational environments. The interface prioritizes usability, accessibility, and efficiency for teachers managing student notes.
 
 ### Design Principles
+
 - **Simplicity** - Clean, uncluttered interface focused on core tasks
 - **Accessibility** - WCAG 2.1 AA compliance for all users
 - **Efficiency** - Quick access to frequently used features
@@ -14,6 +15,7 @@ The NorthPark Learning Support application follows a clean, professional design 
 ## Color Palette
 
 ### Primary Colors
+
 ```css
 /* Primary Blue - Trust and professionalism */
 --primary-50: #eff6ff;
@@ -21,7 +23,7 @@ The NorthPark Learning Support application follows a clean, professional design 
 --primary-200: #bfdbfe;
 --primary-300: #93c5fd;
 --primary-400: #60a5fa;
---primary-500: #3b82f6;  /* Main brand color */
+--primary-500: #3b82f6; /* Main brand color */
 --primary-600: #2563eb;
 --primary-700: #1d4ed8;
 --primary-800: #1e40af;
@@ -33,7 +35,7 @@ The NorthPark Learning Support application follows a clean, professional design 
 --secondary-200: #bbf7d0;
 --secondary-300: #86efac;
 --secondary-400: #4ade80;
---secondary-500: #22c55e;  /* Success actions */
+--secondary-500: #22c55e; /* Success actions */
 --secondary-600: #16a34a;
 --secondary-700: #15803d;
 --secondary-800: #166534;
@@ -41,6 +43,7 @@ The NorthPark Learning Support application follows a clean, professional design 
 ```
 
 ### Neutral Colors
+
 ```css
 /* Grays for text and backgrounds */
 --gray-50: #f9fafb;
@@ -56,6 +59,7 @@ The NorthPark Learning Support application follows a clean, professional design 
 ```
 
 ### Status Colors
+
 ```css
 /* Status indicators */
 --success: #22c55e;
@@ -67,27 +71,30 @@ The NorthPark Learning Support application follows a clean, professional design 
 ## Typography
 
 ### Font Stack
+
 ```css
 /* Primary font - Inter for readability */
---font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+--font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
 /* Monospace for code/data */
---font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+--font-mono: "JetBrains Mono", "Fira Code", monospace;
 ```
 
 ### Font Sizes
+
 ```css
---text-xs: 0.75rem;    /* 12px - Small labels */
---text-sm: 0.875rem;   /* 14px - Body text */
---text-base: 1rem;     /* 16px - Default text */
---text-lg: 1.125rem;   /* 18px - Large text */
---text-xl: 1.25rem;    /* 20px - Headings */
---text-2xl: 1.5rem;    /* 24px - Page titles */
---text-3xl: 1.875rem;  /* 30px - Section headers */
---text-4xl: 2.25rem;   /* 36px - Main titles */
+--text-xs: 0.75rem; /* 12px - Small labels */
+--text-sm: 0.875rem; /* 14px - Body text */
+--text-base: 1rem; /* 16px - Default text */
+--text-lg: 1.125rem; /* 18px - Large text */
+--text-xl: 1.25rem; /* 20px - Headings */
+--text-2xl: 1.5rem; /* 24px - Page titles */
+--text-3xl: 1.875rem; /* 30px - Section headers */
+--text-4xl: 2.25rem; /* 36px - Main titles */
 ```
 
 ### Font Weights
+
 ```css
 --font-light: 300;
 --font-normal: 400;
@@ -166,10 +173,10 @@ export const Header = () => {
 // src/components/layout/sidebar.tsx
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Home, 
-  Users, 
-  FileText, 
+import {
+  Home,
+  Users,
+  FileText,
   Settings,
   BookOpen,
   GraduationCap
@@ -192,7 +199,7 @@ export const Sidebar = () => {
         <GraduationCap className="h-8 w-8 text-primary-600" />
         <h2 className="ml-2 text-lg font-semibold">Teacher Portal</h2>
       </div>
-      
+
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navigation.map((item) => {
           const isActive = pathname === item.href;
@@ -665,6 +672,7 @@ export const NoteForm: React.FC<NoteFormProps> = ({
 ## Responsive Design
 
 ### Breakpoints
+
 ```css
 /* Tailwind CSS breakpoints */
 sm: 640px   /* Small devices */
@@ -675,6 +683,7 @@ xl: 1280px  /* Extra large devices */
 ```
 
 ### Mobile-First Approach
+
 ```typescript
 // Responsive grid example
 export const StudentGrid = ({ students }: { students: Student[] }) => {
@@ -691,12 +700,14 @@ export const StudentGrid = ({ students }: { students: Student[] }) => {
 ## Accessibility Requirements
 
 ### WCAG 2.1 AA Compliance
+
 - **Color Contrast**: Minimum 4.5:1 ratio for normal text
 - **Keyboard Navigation**: All interactive elements accessible via keyboard
 - **Screen Reader Support**: Proper ARIA labels and semantic HTML
 - **Focus Management**: Clear focus indicators and logical tab order
 
 ### Accessibility Features
+
 ```typescript
 // Accessible button component
 export const AccessibleButton = ({ children, ...props }) => {
@@ -716,6 +727,7 @@ export const AccessibleButton = ({ children, ...props }) => {
 ## Performance Requirements
 
 ### Loading States
+
 ```typescript
 // Loading skeleton component
 export const StudentCardSkeleton = () => {
@@ -733,6 +745,7 @@ export const StudentCardSkeleton = () => {
 ```
 
 ### Image Optimization
+
 ```typescript
 // Optimized image component
 import Image from 'next/image';
@@ -756,6 +769,7 @@ export const OptimizedImage = ({ src, alt, ...props }) => {
 ## Dark Mode Support
 
 ### Theme Configuration
+
 ```typescript
 // Theme provider
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -775,7 +789,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
-    
+
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
@@ -797,6 +811,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 ## Testing Requirements
 
 ### Component Testing
+
 ```typescript
 // Component test example
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -807,9 +822,9 @@ describe('NoteForm Component', () => {
     const mockStudents = [
       { id: '1', firstName: 'John', lastName: 'Doe', class: { name: 'Grade 1A' } },
     ];
-    
+
     render(<NoteForm onSubmit={jest.fn()} students={mockStudents} />);
-    
+
     expect(screen.getByPlaceholderText('Select a student')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter your observation...')).toBeInTheDocument();
   });
@@ -817,6 +832,7 @@ describe('NoteForm Component', () => {
 ```
 
 ### Accessibility Testing
+
 ```typescript
 // Accessibility test
 import { render } from '@testing-library/react';

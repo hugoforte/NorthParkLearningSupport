@@ -1,14 +1,20 @@
-import { useState } from 'react';
-import { useMutation, useQuery } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import type { Id } from '../../../convex/_generated/dataModel';
+import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 interface NoteFormProps {
   note?: {
@@ -32,13 +38,20 @@ const categories = [
   { value: "OTHER", label: "Other" },
 ] as const;
 
-export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFormProps) => {
-  const [studentId, setStudentId] = useState(note?.studentId ?? initialStudentId ?? '');
-  const [authorId, setAuthorId] = useState(note?.authorId ?? '');
-  const [category, setCategory] = useState(note?.category ?? '');
-  const [content, setContent] = useState(note?.content ?? '');
+export const NoteForm = ({
+  note,
+  initialStudentId,
+  onSuccess,
+  onCancel,
+}: NoteFormProps) => {
+  const [studentId, setStudentId] = useState(
+    note?.studentId ?? initialStudentId ?? "",
+  );
+  const [authorId, setAuthorId] = useState(note?.authorId ?? "");
+  const [category, setCategory] = useState(note?.category ?? "");
+  const [content, setContent] = useState(note?.content ?? "");
   const [isPrivate, setIsPrivate] = useState(note?.isPrivate ?? false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const createNote = useMutation(api.notes.create);
@@ -49,13 +62,18 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       if (note) {
         await updateNote({
           id: note._id,
-          category: category as "ACADEMIC" | "BEHAVIOR" | "SOCIAL" | "HEALTH" | "OTHER",
+          category: category as
+            | "ACADEMIC"
+            | "BEHAVIOR"
+            | "SOCIAL"
+            | "HEALTH"
+            | "OTHER",
           content,
           isPrivate,
         });
@@ -63,23 +81,30 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
         await createNote({
           studentId: studentId as Id<"students">,
           authorId: authorId as Id<"teachers">,
-          category: category as "ACADEMIC" | "BEHAVIOR" | "SOCIAL" | "HEALTH" | "OTHER",
+          category: category as
+            | "ACADEMIC"
+            | "BEHAVIOR"
+            | "SOCIAL"
+            | "HEALTH"
+            | "OTHER",
           content,
           isPrivate,
         });
       }
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="max-w-2xl mx-auto bg-gray-800 border-gray-700">
+    <Card className="mx-auto max-w-2xl border-gray-700 bg-gray-800">
       <CardHeader>
-        <CardTitle className="text-white">{note ? 'Edit Note' : 'Add Note'}</CardTitle>
+        <CardTitle className="text-white">
+          {note ? "Edit Note" : "Add Note"}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,9 +117,15 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
           {!note && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="student" className="text-gray-300">Student</Label>
-                <Select value={studentId} onValueChange={setStudentId} disabled={isLoading}>
-                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <Label htmlFor="student" className="text-gray-300">
+                  Student
+                </Label>
+                <Select
+                  value={studentId}
+                  onValueChange={setStudentId}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                     <SelectValue placeholder="Select a student" />
                   </SelectTrigger>
                   <SelectContent>
@@ -108,9 +139,15 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="author" className="text-gray-300">Author (Teacher)</Label>
-                <Select value={authorId} onValueChange={setAuthorId} disabled={isLoading}>
-                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <Label htmlFor="author" className="text-gray-300">
+                  Author (Teacher)
+                </Label>
+                <Select
+                  value={authorId}
+                  onValueChange={setAuthorId}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                     <SelectValue placeholder="Select a teacher" />
                   </SelectTrigger>
                   <SelectContent>
@@ -126,9 +163,15 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-gray-300">Category</Label>
-            <Select value={category} onValueChange={setCategory} disabled={isLoading}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+            <Label htmlFor="category" className="text-gray-300">
+              Category
+            </Label>
+            <Select
+              value={category}
+              onValueChange={setCategory}
+              disabled={isLoading}
+            >
+              <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
@@ -142,14 +185,18 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-gray-300">Note Content</Label>
+            <Label htmlFor="content" className="text-gray-300">
+              Note Content
+            </Label>
             <Textarea
               id="content"
               value={content}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setContent(e.target.value)
+              }
               required
               disabled={isLoading}
-              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 min-h-[120px]"
+              className="min-h-[120px] border-gray-600 bg-gray-700 text-white placeholder-gray-400"
               placeholder="Enter your note here..."
             />
           </div>
@@ -168,12 +215,26 @@ export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFo
 
           <div className="flex justify-end space-x-2">
             {onCancel && (
-              <Button type="button" variant="outline" onClick={onCancel} className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
                 Cancel
               </Button>
             )}
-            <Button type="submit" disabled={isLoading || !category || !content || (!note && (!studentId || !authorId))} className="bg-blue-600 hover:bg-blue-700 text-white">
-              {isLoading ? 'Saving...' : note ? 'Update' : 'Create'}
+            <Button
+              type="submit"
+              disabled={
+                isLoading ||
+                !category ||
+                !content ||
+                (!note && (!studentId || !authorId))
+              }
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              {isLoading ? "Saving..." : note ? "Update" : "Create"}
             </Button>
           </div>
         </form>

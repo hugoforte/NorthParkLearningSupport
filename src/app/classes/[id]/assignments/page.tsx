@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { api } from '../../../../../convex/_generated/api';
-import { AssignmentList } from '@/components/class-assignments/assignment-list';
-import { AssignmentForm } from '@/components/class-assignments/assignment-form';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus } from 'lucide-react';
-import type { Id } from '../../../../../convex/_generated/dataModel';
-import { useState } from 'react';
+import { use } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { AssignmentList } from "@/components/class-assignments/assignment-list";
+import { AssignmentForm } from "@/components/class-assignments/assignment-form";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Plus } from "lucide-react";
+import type { Id } from "../../../../../convex/_generated/dataModel";
+import { useState } from "react";
 
 interface ClassAssignmentsPageProps {
   params: Promise<{
@@ -17,7 +17,9 @@ interface ClassAssignmentsPageProps {
   }>;
 }
 
-export default function ClassAssignmentsPage({ params }: ClassAssignmentsPageProps) {
+export default function ClassAssignmentsPage({
+  params,
+}: ClassAssignmentsPageProps) {
   const router = useRouter();
   const { id } = use(params);
   const [showAssignmentForm, setShowAssignmentForm] = useState(false);
@@ -59,20 +61,22 @@ export default function ClassAssignmentsPage({ params }: ClassAssignmentsPagePro
               onClick={() => router.back()}
               className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-white">Class Assignments</h1>
+              <h1 className="text-3xl font-bold text-white">
+                Class Assignments
+              </h1>
               <p className="text-gray-400">{classItem.name}</p>
             </div>
           </div>
           {!showAssignmentForm && (
             <Button
               onClick={() => setShowAssignmentForm(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 text-white hover:bg-blue-700"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Assign Teacher
             </Button>
           )}
@@ -80,7 +84,7 @@ export default function ClassAssignmentsPage({ params }: ClassAssignmentsPagePro
 
         {/* Assignment Form */}
         {showAssignmentForm && (
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div className="rounded-lg border border-gray-700 bg-gray-800 p-6">
             <AssignmentForm
               classId={classItem._id}
               onSuccess={handleSuccess}
@@ -90,7 +94,7 @@ export default function ClassAssignmentsPage({ params }: ClassAssignmentsPagePro
         )}
 
         {/* Assignment List */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="rounded-lg border border-gray-700 bg-gray-800 p-6">
           <AssignmentList classId={classItem._id} />
         </div>
       </div>

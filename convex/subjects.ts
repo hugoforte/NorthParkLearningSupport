@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all subjects
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("subjects")
-      .collect();
+    return await ctx.db.query("subjects").collect();
   },
 });
 
@@ -67,7 +65,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const subject = await ctx.db.get(id);
     if (!subject) {
       throw new Error("Subject not found");

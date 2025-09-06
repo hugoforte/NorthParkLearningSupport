@@ -1,12 +1,18 @@
-import { useState } from 'react';
-import { useMutation, useQuery } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Id } from '../../../convex/_generated/dataModel';
+import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 interface AssignmentFormProps {
   classId: Id<"classes">;
@@ -14,25 +20,35 @@ interface AssignmentFormProps {
   onCancel?: () => void;
 }
 
-export const AssignmentForm = ({ classId, onSuccess, onCancel }: AssignmentFormProps) => {
-  const [selectedTeacher, setSelectedTeacher] = useState<string>('');
-  const [role, setRole] = useState<string>('teacher');
-  const [error, setError] = useState('');
+export const AssignmentForm = ({
+  classId,
+  onSuccess,
+  onCancel,
+}: AssignmentFormProps) => {
+  const [selectedTeacher, setSelectedTeacher] = useState<string>("");
+  const [role, setRole] = useState<string>("teacher");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const createAssignment = useMutation(api.classAssignments.create);
   const teachers = useQuery(api.teachers.getActive);
-  const existingAssignments = useQuery(api.classAssignments.getByClass, { classId });
+  const existingAssignments = useQuery(api.classAssignments.getByClass, {
+    classId,
+  });
 
   // Filter out teachers already assigned to this class
-  const availableTeachers = teachers?.filter(teacher => 
-    !existingAssignments?.some(assignment => assignment.teacherId === teacher._id)
-  ) ?? [];
+  const availableTeachers =
+    teachers?.filter(
+      (teacher) =>
+        !existingAssignments?.some(
+          (assignment) => assignment.teacherId === teacher._id,
+        ),
+    ) ?? [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       await createAssignment({
@@ -42,14 +58,14 @@ export const AssignmentForm = ({ classId, onSuccess, onCancel }: AssignmentFormP
       });
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="max-w-md mx-auto bg-gray-800 border-gray-700">
+    <Card className="mx-auto max-w-md border-gray-700 bg-gray-800">
       <CardHeader>
         <CardTitle className="text-white">Assign Teacher to Class</CardTitle>
       </CardHeader>
@@ -62,9 +78,15 @@ export const AssignmentForm = ({ classId, onSuccess, onCancel }: AssignmentFormP
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="teacher" className="text-gray-300">Teacher</Label>
-            <Select value={selectedTeacher} onValueChange={setSelectedTeacher} disabled={isLoading}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+            <Label htmlFor="teacher" className="text-gray-300">
+              Teacher
+            </Label>
+            <Select
+              value={selectedTeacher}
+              onValueChange={setSelectedTeacher}
+              disabled={isLoading}
+            >
+              <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                 <SelectValue placeholder="Select a teacher" />
               </SelectTrigger>
               <SelectContent>
@@ -84,9 +106,11 @@ export const AssignmentForm = ({ classId, onSuccess, onCancel }: AssignmentFormP
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role" className="text-gray-300">Role</Label>
+            <Label htmlFor="role" className="text-gray-300">
+              Role
+            </Label>
             <Select value={role} onValueChange={setRole} disabled={isLoading}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
@@ -98,16 +122,23 @@ export const AssignmentForm = ({ classId, onSuccess, onCancel }: AssignmentFormP
 
           <div className="flex justify-end space-x-2">
             {onCancel && (
-              <Button type="button" variant="outline" onClick={onCancel} className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
                 Cancel
               </Button>
             )}
-            <Button 
-              type="submit" 
-              disabled={isLoading || !selectedTeacher || availableTeachers.length === 0} 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+            <Button
+              type="submit"
+              disabled={
+                isLoading || !selectedTeacher || availableTeachers.length === 0
+              }
+              className="bg-blue-600 text-white hover:bg-blue-700"
             >
-              {isLoading ? 'Assigning...' : 'Assign Teacher'}
+              {isLoading ? "Assigning..." : "Assign Teacher"}
             </Button>
           </div>
         </form>

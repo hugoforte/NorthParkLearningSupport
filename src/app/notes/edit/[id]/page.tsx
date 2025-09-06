@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { api } from '../../../../../convex/_generated/api';
-import { NoteForm } from '@/components/notes/note-form';
-import type { Id } from '../../../../../convex/_generated/dataModel';
+import { use } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { NoteForm } from "@/components/notes/note-form";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 interface EditNotePageProps {
   params: Promise<{
@@ -19,11 +19,11 @@ export default function EditNotePage({ params }: EditNotePageProps) {
   const note = useQuery(api.notes.getById, { id: id as Id<"notes"> });
 
   const handleSuccess = () => {
-    router.push('/notes');
+    router.push("/notes");
   };
 
   const handleCancel = () => {
-    router.push('/notes');
+    router.push("/notes");
   };
 
   if (note === undefined) {
@@ -44,11 +44,7 @@ export default function EditNotePage({ params }: EditNotePageProps) {
 
   return (
     <div className="container mx-auto py-6">
-      <NoteForm 
-        note={note} 
-        onSuccess={handleSuccess} 
-        onCancel={handleCancel} 
-      />
+      <NoteForm note={note} onSuccess={handleSuccess} onCancel={handleCancel} />
     </div>
   );
 }

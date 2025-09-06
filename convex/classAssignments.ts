@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all class assignments
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("classAssignments")
-      .collect();
+    return await ctx.db.query("classAssignments").collect();
   },
 });
 
@@ -34,15 +32,15 @@ export const getByClass = query({
 
 // Get specific assignment
 export const getByTeacherAndClass = query({
-  args: { 
+  args: {
     teacherId: v.id("teachers"),
-    classId: v.id("classes")
+    classId: v.id("classes"),
   },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher_class", (q) => 
-        q.eq("teacherId", args.teacherId).eq("classId", args.classId)
+      .withIndex("by_teacher_class", (q) =>
+        q.eq("teacherId", args.teacherId).eq("classId", args.classId),
       )
       .first();
   },
@@ -59,8 +57,8 @@ export const create = mutation({
     // Check if assignment already exists
     const existing = await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher_class", (q) => 
-        q.eq("teacherId", args.teacherId).eq("classId", args.classId)
+      .withIndex("by_teacher_class", (q) =>
+        q.eq("teacherId", args.teacherId).eq("classId", args.classId),
       )
       .first();
 
@@ -80,7 +78,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const assignment = await ctx.db.get(id);
     if (!assignment) {
       throw new Error("Class assignment not found");
@@ -105,15 +103,15 @@ export const remove = mutation({
 
 // Remove teacher from class (by teacher and class IDs)
 export const removeByTeacherAndClass = mutation({
-  args: { 
+  args: {
     teacherId: v.id("teachers"),
-    classId: v.id("classes")
+    classId: v.id("classes"),
   },
   handler: async (ctx, args) => {
     const assignment = await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher_class", (q) => 
-        q.eq("teacherId", args.teacherId).eq("classId", args.classId)
+      .withIndex("by_teacher_class", (q) =>
+        q.eq("teacherId", args.teacherId).eq("classId", args.classId),
       )
       .first();
 

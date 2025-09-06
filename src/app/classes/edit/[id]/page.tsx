@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { api } from '../../../../../convex/_generated/api';
-import { ClassForm } from '@/components/classes/class-form';
-import type { Id } from '../../../../../convex/_generated/dataModel';
+import { use } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { ClassForm } from "@/components/classes/class-form";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 interface EditClassPageProps {
   params: Promise<{
@@ -19,11 +19,11 @@ export default function EditClassPage({ params }: EditClassPageProps) {
   const classItem = useQuery(api.classes.getById, { id: id as Id<"classes"> });
 
   const handleSuccess = () => {
-    router.push('/classes');
+    router.push("/classes");
   };
 
   const handleCancel = () => {
-    router.push('/classes');
+    router.push("/classes");
   };
 
   if (classItem === undefined) {
@@ -44,10 +44,10 @@ export default function EditClassPage({ params }: EditClassPageProps) {
 
   return (
     <div className="container mx-auto py-6">
-      <ClassForm 
-        classItem={classItem} 
-        onSuccess={handleSuccess} 
-        onCancel={handleCancel} 
+      <ClassForm
+        classItem={classItem}
+        onSuccess={handleSuccess}
+        onCancel={handleCancel}
       />
     </div>
   );

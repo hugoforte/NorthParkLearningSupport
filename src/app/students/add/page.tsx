@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { StudentForm } from '@/components/students/student-form';
+import { useRouter } from "next/navigation";
+import { StudentForm } from "@/components/students/student-form";
 
 export default function AddStudentPage() {
   const router = useRouter();
 
   const handleSuccess = () => {
-    router.push('/students');
+    router.push("/students");
   };
 
   const handleCancel = () => {
-    router.push('/students');
+    router.push("/students");
   };
 
   return (

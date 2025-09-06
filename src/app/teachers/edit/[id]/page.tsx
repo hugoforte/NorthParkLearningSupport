@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { api } from '../../../../../convex/_generated/api';
-import { TeacherForm } from '@/components/teachers/teacher-form';
-import type { Id } from '../../../../../convex/_generated/dataModel';
+import { use } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { TeacherForm } from "@/components/teachers/teacher-form";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 interface EditTeacherPageProps {
   params: Promise<{
@@ -19,11 +19,11 @@ export default function EditTeacherPage({ params }: EditTeacherPageProps) {
   const teacher = useQuery(api.teachers.getById, { id: id as Id<"teachers"> });
 
   const handleSuccess = () => {
-    router.push('/teachers');
+    router.push("/teachers");
   };
 
   const handleCancel = () => {
-    router.push('/teachers');
+    router.push("/teachers");
   };
 
   if (teacher === undefined) {
@@ -44,10 +44,10 @@ export default function EditTeacherPage({ params }: EditTeacherPageProps) {
 
   return (
     <div className="container mx-auto py-6">
-      <TeacherForm 
-        teacher={teacher} 
-        onSuccess={handleSuccess} 
-        onCancel={handleCancel} 
+      <TeacherForm
+        teacher={teacher}
+        onSuccess={handleSuccess}
+        onCancel={handleCancel}
       />
     </div>
   );

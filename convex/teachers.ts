@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all teachers
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("teachers")
-      .collect();
+    return await ctx.db.query("teachers").collect();
   },
 });
 
@@ -28,11 +26,11 @@ export const search = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("teachers")
-      .filter((q) => 
+      .filter((q) =>
         q.or(
           q.eq(q.field("firstName"), args.query),
-          q.eq(q.field("lastName"), args.query)
-        )
+          q.eq(q.field("lastName"), args.query),
+        ),
       )
       .collect();
   },
@@ -72,7 +70,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const teacher = await ctx.db.get(id);
     if (!teacher) {
       throw new Error("Teacher not found");

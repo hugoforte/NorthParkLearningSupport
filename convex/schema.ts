@@ -11,7 +11,6 @@ export default defineSchema({
     .index("by_active", ["isActive"])
     .index("by_name", ["lastName", "firstName"]),
 
-
   // Grades (K-9)
   grades: defineTable({
     name: v.string(),
@@ -64,7 +63,7 @@ export default defineSchema({
       v.literal("BEHAVIOR"),
       v.literal("SOCIAL"),
       v.literal("HEALTH"),
-      v.literal("OTHER")
+      v.literal("OTHER"),
     ),
     content: v.string(),
     isPrivate: v.boolean(),
@@ -94,7 +93,7 @@ export default defineSchema({
       v.literal("IN_PROGRESS"),
       v.literal("COMPLETED"),
       v.literal("ON_HOLD"),
-      v.literal("CANCELLED")
+      v.literal("CANCELLED"),
     ),
     targetDate: v.optional(v.number()),
   })

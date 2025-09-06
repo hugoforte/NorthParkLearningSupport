@@ -25,7 +25,7 @@ export default function RootLayout({
         <ConvexProviderWrapper>
           <div className="flex min-h-screen">
             <MainNav />
-            <main className="flex-1 px-4 py-20 md:py-10 md:px-8 max-w-[1600px] mx-auto w-full">
+            <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-20 md:px-8 md:py-10">
               {children}
             </main>
           </div>

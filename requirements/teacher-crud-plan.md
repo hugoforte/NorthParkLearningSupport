@@ -7,7 +7,9 @@ This plan outlines the complete implementation of CRUD (Create, Read, Update, De
 ## Phase 1: Convex Schema Setup
 
 ### 1.1 Create Convex Schema
+
 **File**: `convex/schema.ts`
+
 ```typescript
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
@@ -24,28 +26,30 @@ export default defineSchema({
 ```
 
 ### 1.2 Environment Configuration
+
 ✅ **Already completed** - Convex project initialized and environment configured
 
 ## Phase 2: Convex Functions (Backend)
 
 ### 2.1 Teacher Query Functions
+
 **File**: `convex/teachers.ts`
 
 #### Get All Teachers
+
 ```typescript
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("teachers")
-      .collect();
+    return await ctx.db.query("teachers").collect();
   },
 });
 ```
 
 #### Get Teacher by ID
+
 ```typescript
 export const getById = query({
   args: { id: v.id("teachers") },
@@ -60,18 +64,19 @@ export const getById = query({
 ```
 
 #### Search Teachers
+
 ```typescript
 export const search = query({
   args: { query: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("teachers")
-      .filter((q) => 
+      .filter((q) =>
         q.or(
           q.eq(q.field("firstName"), args.query),
           q.eq(q.field("lastName"), args.query),
-          q.eq(q.field("email"), args.query)
-        )
+          q.eq(q.field("email"), args.query),
+        ),
       )
       .collect();
   },
@@ -81,6 +86,7 @@ export const search = query({
 ### 2.2 Teacher Mutation Functions
 
 #### Create Teacher
+
 ```typescript
 export const create = mutation({
   args: {
@@ -96,7 +102,7 @@ export const create = mutation({
       .query("teachers")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
-    
+
     if (existing) {
       throw new Error("Teacher with this email already exists");
     }
@@ -110,6 +116,7 @@ export const create = mutation({
 ```
 
 #### Update Teacher
+
 ```typescript
 export const update = mutation({
   args: {
@@ -123,7 +130,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const teacher = await ctx.db.get(id);
     if (!teacher) {
       throw new Error("Teacher not found");
@@ -135,7 +142,7 @@ export const update = mutation({
         .query("teachers")
         .withIndex("by_email", (q) => q.eq("email", updates.email))
         .first();
-      
+
       if (existing) {
         throw new Error("Teacher with this email already exists");
       }
@@ -147,6 +154,7 @@ export const update = mutation({
 ```
 
 #### Delete Teacher (Soft Delete)
+
 ```typescript
 export const remove = mutation({
   args: { id: v.id("teachers") },
@@ -163,6 +171,7 @@ export const remove = mutation({
 ```
 
 #### Hard Delete Teacher
+
 ```typescript
 export const hardDelete = mutation({
   args: { id: v.id("teachers") },
@@ -180,6 +189,7 @@ export const hardDelete = mutation({
 ## Phase 3: Frontend Components
 
 ### 3.1 Teacher List Component
+
 **File**: `src/components/teachers/teacher-list.tsx`
 
 ```typescript
@@ -217,6 +227,7 @@ export const TeacherList = () => {
 ```
 
 ### 3.2 Teacher Card Component
+
 **File**: `src/components/teachers/teacher-card.tsx`
 
 ```typescript
@@ -240,7 +251,7 @@ interface TeacherCardProps {
 
 export const TeacherCard = ({ teacher }: TeacherCardProps) => {
   const fullName = `${teacher.firstName} ${teacher.lastName}`;
-  
+
   return (
     <Card>
       <CardHeader>
@@ -282,6 +293,7 @@ export const TeacherCard = ({ teacher }: TeacherCardProps) => {
 ```
 
 ### 3.3 Teacher Form Component
+
 **File**: `src/components/teachers/teacher-form.tsx`
 
 ```typescript
@@ -440,6 +452,7 @@ export const TeacherForm = ({ teacher, onSuccess, onCancel }: TeacherFormProps) 
 ## Phase 4: Pages and Routing
 
 ### 4.1 Teachers Page
+
 **File**: `src/app/teachers/page.tsx`
 
 ```typescript
@@ -455,6 +468,7 @@ export default function TeachersPage() {
 ```
 
 ### 4.2 Add Teacher Page
+
 **File**: `src/app/teachers/add/page.tsx`
 
 ```typescript
@@ -485,6 +499,7 @@ export default function AddTeacherPage() {
 ## Phase 5: Testing
 
 ### 5.1 Unit Tests for Convex Functions
+
 **File**: `src/__tests__/teachers.test.ts`
 
 ```typescript
@@ -558,6 +573,7 @@ describe("Teacher CRUD", () => {
 ```
 
 ### 5.2 Component Tests
+
 **File**: `src/__tests__/teacher-list.test.tsx`
 
 ```typescript
@@ -589,12 +605,14 @@ describe('TeacherList', () => {
 ## Phase 6: Error Handling & Validation
 
 ### 6.1 Input Validation
+
 - Email format validation
 - Name length validation
 - Duplicate email prevention
 - Required field validation
 
 ### 6.2 Error Messages
+
 - User-friendly error messages
 - Loading states
 - Success notifications
@@ -622,13 +640,13 @@ describe('TeacherList', () => {
 
 ```typescript
 interface Teacher {
-  _id: string;           // Convex-generated ID
-  firstName: string;     // Required
-  lastName: string;      // Required
-  email: string;         // Required, unique
-  phone?: string;        // Optional
-  image?: string;        // Optional profile image URL
-  isActive: boolean;     // Default: true
+  _id: string; // Convex-generated ID
+  firstName: string; // Required
+  lastName: string; // Required
+  email: string; // Required, unique
+  phone?: string; // Optional
+  image?: string; // Optional profile image URL
+  isActive: boolean; // Default: true
   _creationTime: number; // Convex auto-generated
 }
 ```

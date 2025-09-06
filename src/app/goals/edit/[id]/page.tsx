@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { api } from '../../../../../convex/_generated/api';
-import { GoalForm } from '@/components/goals/goal-form';
-import type { Id } from '../../../../../convex/_generated/dataModel';
+import { use } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { GoalForm } from "@/components/goals/goal-form";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 interface EditGoalPageProps {
   params: Promise<{
@@ -19,11 +19,11 @@ export default function EditGoalPage({ params }: EditGoalPageProps) {
   const goal = useQuery(api.goals.getById, { id: id as Id<"goals"> });
 
   const handleSuccess = () => {
-    router.push('/goals');
+    router.push("/goals");
   };
 
   const handleCancel = () => {
-    router.push('/goals');
+    router.push("/goals");
   };
 
   if (goal === undefined) {
@@ -44,11 +44,7 @@ export default function EditGoalPage({ params }: EditGoalPageProps) {
 
   return (
     <div className="container mx-auto py-6">
-      <GoalForm 
-        goal={goal} 
-        onSuccess={handleSuccess} 
-        onCancel={handleCancel} 
-      />
+      <GoalForm goal={goal} onSuccess={handleSuccess} onCancel={handleCancel} />
     </div>
   );
 }

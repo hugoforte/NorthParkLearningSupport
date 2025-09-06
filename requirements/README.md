@@ -22,6 +22,7 @@ This folder contains the complete requirements and specifications for the NorthP
 ## Application Overview
 
 **NorthPark Learning Support** is a web application designed for teachers to:
+
 - Log in securely to their account
 - Select students from their classes
 - Add and manage notes about student progress, behavior, and observations

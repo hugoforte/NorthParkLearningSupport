@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ClassList } from '@/components/classes/class-list';
+import { ClassList } from "@/components/classes/class-list";
 
 export default function ClassesPage() {
   return (

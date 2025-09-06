@@ -5,6 +5,7 @@
 ### Core Technologies
 
 #### Frontend
+
 - **Next.js 15.2.3** - React framework with App Router
   - Server-side rendering (SSR)
   - Static site generation (SSG)
@@ -25,6 +26,7 @@
   - Purge optimization
 
 #### Backend
+
 - **Convex** - Backend-as-a-Service
   - Type-safe database queries
   - Real-time subscriptions
@@ -39,6 +41,7 @@
   - User identity management
 
 #### Database
+
 - **Convex Database** (Managed)
   - ACID compliance
   - Real-time updates
@@ -49,6 +52,7 @@
 ### Development Tools
 
 #### Code Quality
+
 - **ESLint 9.23.0** - Code linting
   - TypeScript support
   - React hooks rules
@@ -66,12 +70,14 @@
   - Commit message validation
 
 #### Testing
+
 - **Jest** - Unit testing framework
 - **React Testing Library** - Component testing
 - **Playwright** - End-to-end testing
 - **MSW** - API mocking
 
 #### Development Environment
+
 - **Node.js 18+** - Runtime environment
 - **pnpm 9.14.2** - Package management
 - **Git** - Version control
@@ -80,6 +86,7 @@
 ## System Requirements
 
 ### Development Environment
+
 - **Operating System**: Windows 10+, macOS 10.15+, or Linux
 - **Node.js**: Version 18.0.0 or higher
 - **Memory**: Minimum 8GB RAM (16GB recommended)
@@ -87,6 +94,7 @@
 - **Network**: Stable internet connection
 
 ### Production Environment
+
 - **Hosting Platform**: Vercel (primary), Netlify, or Docker
 - **Database**: Convex (managed service)
 - **CDN**: Built-in with hosting platform
@@ -96,6 +104,7 @@
 ## Performance Requirements
 
 ### Frontend Performance
+
 - **First Contentful Paint**: < 1.5s
 - **Largest Contentful Paint**: < 2.5s
 - **Cumulative Layout Shift**: < 0.1
@@ -103,12 +112,14 @@
 - **Bundle Size**: < 500KB (initial load)
 
 ### Backend Performance
+
 - **API Response Time**: < 200ms (95th percentile)
 - **Database Query Time**: < 100ms (average)
 - **Real-time Updates**: < 50ms latency
 - **Concurrent Users**: Support 100+ simultaneous users
 
 ### Database Performance
+
 - **Real-time Subscriptions**: < 50ms update latency
 - **Query Optimization**: Automatic indexing
 - **Schema Changes**: Instant deployment
@@ -117,6 +128,7 @@
 ## Security Requirements
 
 ### Authentication & Authorization
+
 - **Password Policy**: Minimum 8 characters, complexity requirements
 - **Session Management**: Built-in with Convex Auth
 - **CSRF Protection**: Built-in with Convex
@@ -124,6 +136,7 @@
 - **Input Validation**: All user inputs validated with Convex validators
 
 ### Data Protection
+
 - **Encryption**: HTTPS for all communications
 - **Environment Variables**: Secure credential management
 - **Database Security**: Encrypted connections and storage
@@ -131,6 +144,7 @@
 - **SQL Injection**: Prevented by Convex query system
 
 ### Compliance
+
 - **FERPA**: Educational data protection compliance
 - **Accessibility**: WCAG 2.1 AA compliance
 - **Security Headers**: CSP, HSTS, X-Frame-Options
@@ -139,12 +153,14 @@
 ## Scalability Requirements
 
 ### Horizontal Scaling
+
 - **Stateless Architecture**: Serverless functions
 - **Database Scaling**: Automatic with Convex
 - **CDN Integration**: Global content delivery
 - **Load Balancing**: Automatic with hosting platform
 
 ### Vertical Scaling
+
 - **Memory Usage**: < 512MB per function
 - **CPU Usage**: < 80% under normal load
 - **Database Connections**: Managed by Convex
@@ -153,17 +169,20 @@
 ## Browser Support
 
 ### Supported Browsers
+
 - **Chrome**: Version 90+
 - **Firefox**: Version 88+
 - **Safari**: Version 14+
 - **Edge**: Version 90+
 
 ### Mobile Support
+
 - **iOS Safari**: Version 14+
 - **Chrome Mobile**: Version 90+
 - **Samsung Internet**: Version 13+
 
 ### Progressive Enhancement
+
 - **Core Functionality**: Works without JavaScript
 - **Enhanced Experience**: Full features with JavaScript
 - **Offline Support**: Service worker implementation
@@ -172,12 +191,14 @@
 ## Integration Requirements
 
 ### Third-Party Services
+
 - **Authentication Providers**: Google, Microsoft
 - **Email Service**: SendGrid, Resend, or similar
 - **File Storage**: AWS S3, Cloudinary, or similar
 - **Analytics**: Vercel Analytics, Google Analytics
 
 ### API Integrations
+
 - **REST APIs**: Standard HTTP methods
 - **GraphQL**: Apollo Client support
 - **WebSocket**: Real-time communication
@@ -186,12 +207,14 @@
 ## Monitoring & Observability
 
 ### Application Monitoring
+
 - **Error Tracking**: Sentry or similar
 - **Performance Monitoring**: Web Vitals tracking
 - **Uptime Monitoring**: Service availability
 - **User Analytics**: Usage patterns and behavior
 
 ### Infrastructure Monitoring
+
 - **Server Metrics**: CPU, memory, disk usage
 - **Database Metrics**: Query performance, connections
 - **Network Metrics**: Response times, error rates
@@ -200,12 +223,14 @@
 ## Backup & Recovery
 
 ### Data Backup
+
 - **Database Backups**: Daily automated backups
 - **File Backups**: Regular file system backups
 - **Configuration Backups**: Environment and config files
 - **Code Backups**: Git repository redundancy
 
 ### Disaster Recovery
+
 - **Recovery Time Objective**: < 4 hours
 - **Recovery Point Objective**: < 1 hour
 - **Backup Testing**: Monthly restore tests
@@ -214,12 +239,14 @@
 ## Compliance & Standards
 
 ### Code Standards
+
 - **TypeScript**: Strict mode enabled
 - **ESLint**: Airbnb or similar configuration
 - **Prettier**: Consistent formatting
 - **Conventional Commits**: Standardized commit messages
 
 ### Documentation Standards
+
 - **API Documentation**: OpenAPI/Swagger
 - **Code Comments**: JSDoc for functions
 - **README**: Comprehensive setup instructions
@@ -228,18 +255,21 @@
 ## Development Workflow
 
 ### Git Workflow
+
 - **Main Branch**: `main` for production-ready code
 - **Development Branch**: `develop` for integration
 - **Feature Branches**: `feature/feature-name`
 - **Hotfix Branches**: `hotfix/issue-description`
 
 ### CI/CD Pipeline
+
 - **Automated Testing**: Unit, integration, and E2E tests
 - **Code Quality**: ESLint, Prettier, TypeScript checks
 - **Security Scanning**: Dependency vulnerability checks
 - **Deployment**: Automated deployment to staging and production
 
 ### Code Review Process
+
 - **Pull Request Requirements**: All changes via PR
 - **Review Requirements**: At least one approval
 - **Testing Requirements**: All tests must pass
@@ -248,6 +278,7 @@
 ## Environment Configuration
 
 ### Development Environment
+
 ```bash
 # .env.local
 NODE_ENV=development
@@ -256,6 +287,7 @@ CONVEX_DEPLOY_KEY="your-dev-deploy-key"
 ```
 
 ### Staging Environment
+
 ```bash
 # .env.staging
 NODE_ENV=production
@@ -264,6 +296,7 @@ CONVEX_DEPLOY_KEY="your-staging-deploy-key"
 ```
 
 ### Production Environment
+
 ```bash
 # .env.production
 NODE_ENV=production
@@ -274,6 +307,7 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 ## Deployment Requirements
 
 ### Vercel Deployment
+
 - **Framework**: Next.js
 - **Build Command**: `pnpm build`
 - **Output Directory**: `.next`
@@ -281,12 +315,14 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 - **Environment Variables**: Configured in Vercel dashboard
 
 ### Database Deployment
+
 - **Migration Strategy**: Convex schema updates
 - **Backup Strategy**: Automatic continuous backups
 - **Monitoring**: Built-in query performance monitoring
 - **Scaling**: Automatic scaling with Convex
 
 ### CDN Configuration
+
 - **Static Assets**: Automatic CDN distribution
 - **Image Optimization**: Next.js Image component
 - **Caching**: Browser and CDN caching
@@ -295,24 +331,28 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 ## Testing Requirements
 
 ### Unit Testing
+
 - **Coverage**: Minimum 80% code coverage
 - **Framework**: Jest with React Testing Library
 - **Mocking**: MSW for API mocking
 - **Assertions**: Comprehensive test assertions
 
 ### Integration Testing
+
 - **API Testing**: Convex function testing
 - **Database Testing**: Convex integration tests
 - **Authentication Testing**: Convex Auth flow testing
 - **Error Handling**: Error scenario testing
 
 ### End-to-End Testing
+
 - **Framework**: Playwright
 - **Scenarios**: Critical user journeys
 - **Cross-browser**: Chrome, Firefox, Safari
 - **Mobile Testing**: Responsive design testing
 
 ### Performance Testing
+
 - **Load Testing**: Concurrent user simulation
 - **Stress Testing**: System limits testing
 - **Performance Monitoring**: Real-time metrics
@@ -321,12 +361,14 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 ## Security Testing
 
 ### Vulnerability Assessment
+
 - **Dependency Scanning**: Regular security audits
 - **Code Analysis**: Static code analysis
 - **Penetration Testing**: External security testing
 - **Compliance Testing**: FERPA compliance verification
 
 ### Security Monitoring
+
 - **Intrusion Detection**: Real-time threat monitoring
 - **Access Logging**: User action tracking
 - **Anomaly Detection**: Unusual behavior detection
@@ -335,12 +377,14 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 ## Maintenance Requirements
 
 ### Regular Maintenance
+
 - **Dependency Updates**: Monthly security updates
 - **Database Maintenance**: Regular optimization
 - **Performance Monitoring**: Continuous monitoring
 - **Backup Verification**: Monthly backup tests
 
 ### Documentation Maintenance
+
 - **API Documentation**: Keep up to date
 - **User Guides**: Update with new features
 - **Technical Documentation**: Maintain accuracy
@@ -349,12 +393,14 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 ## Quality Assurance
 
 ### Code Quality Metrics
+
 - **TypeScript Coverage**: 100% type coverage
 - **Test Coverage**: Minimum 80%
 - **Code Complexity**: Maintainable complexity levels
 - **Performance Budget**: Stay within limits
 
 ### User Experience Metrics
+
 - **Page Load Time**: < 2 seconds
 - **User Satisfaction**: > 4.0/5.0 rating
 - **Accessibility Score**: WCAG 2.1 AA compliance
@@ -363,12 +409,14 @@ CONVEX_DEPLOY_KEY="your-prod-deploy-key"
 ## Risk Management
 
 ### Technical Risks
+
 - **Dependency Vulnerabilities**: Regular security updates
 - **Performance Degradation**: Monitoring and optimization
 - **Data Loss**: Comprehensive backup strategy
 - **Security Breaches**: Multi-layered security approach
 
 ### Mitigation Strategies
+
 - **Automated Testing**: Catch issues early
 - **Monitoring**: Real-time issue detection
 - **Documentation**: Clear procedures and runbooks

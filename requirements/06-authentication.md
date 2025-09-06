@@ -5,6 +5,7 @@
 The NorthPark Learning Support application implements a secure authentication system using Convex Auth, supporting both email/password authentication and OAuth providers. The system ensures that only authorized teachers can access student data and create notes.
 
 ### Authentication Features
+
 - **Email/Password Authentication** - Traditional login with secure password hashing
 - **OAuth Integration** - Google and Microsoft login options
 - **Session Management** - Built-in secure session handling
@@ -36,16 +37,16 @@ export default convexAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       // Allow sign in for existing users
-      if (account?.provider === 'google') {
+      if (account?.provider === "google") {
         const existingUser = await ctx.db
           .query("users")
           .withIndex("by_email", (q) => q.eq("email", user.email))
           .first();
-        
+
         if (existingUser) {
           return true;
         }
-        
+
         // Create new user for Google OAuth
         await ctx.db.insert("users", {
           email: user.email,
@@ -55,7 +56,7 @@ export default convexAuth({
           isActive: true,
         });
       }
-      
+
       return true;
     },
   },
@@ -99,7 +100,10 @@ export const signInWithPassword = mutation({
       throw new Error("Invalid credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(args.password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(
+      args.password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     }
@@ -189,7 +193,7 @@ export const SignInForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const signIn = useSignIn();
   const signInWithPassword = useMutation(api.auth.signInWithPassword);
 
@@ -197,7 +201,7 @@ export const SignInForm: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+
     try {
       await signInWithPassword({ email, password });
       window.location.href = '/dashboard';
@@ -211,7 +215,7 @@ export const SignInForm: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setError('');
-    
+
     try {
       await signIn("google");
     } catch (error) {
@@ -415,38 +419,41 @@ export const hasRole = (userRole: string, requiredRole: string): boolean => {
     ADMIN: 2,
   };
 
-  return roleHierarchy[userRole as keyof typeof roleHierarchy] >= 
-         roleHierarchy[requiredRole as keyof typeof roleHierarchy];
+  return (
+    roleHierarchy[userRole as keyof typeof roleHierarchy] >=
+    roleHierarchy[requiredRole as keyof typeof roleHierarchy]
+  );
 };
 
 export const canAccess = (userRole: string, resource: string): boolean => {
   const permissions = {
     TEACHER: [
-      'read:own-classes',
-      'read:own-students',
-      'create:notes',
-      'read:own-notes',
-      'update:own-notes',
-      'delete:own-notes',
+      "read:own-classes",
+      "read:own-students",
+      "create:notes",
+      "read:own-notes",
+      "update:own-notes",
+      "delete:own-notes",
     ],
     ADMIN: [
-      'read:all-classes',
-      'read:all-students',
-      'create:users',
-      'update:users',
-      'delete:users',
-      'create:classes',
-      'update:classes',
-      'delete:classes',
-      'create:students',
-      'update:students',
-      'delete:students',
-      'read:all-notes',
+      "read:all-classes",
+      "read:all-students",
+      "create:users",
+      "update:users",
+      "delete:users",
+      "create:classes",
+      "update:classes",
+      "delete:classes",
+      "create:students",
+      "update:students",
+      "delete:students",
+      "read:all-notes",
     ],
   };
 
-  const userPermissions = permissions[userRole as keyof typeof permissions] || [];
-  
+  const userPermissions =
+    permissions[userRole as keyof typeof permissions] || [];
+
   return userPermissions.includes(resource);
 };
 ```
@@ -455,22 +462,22 @@ export const canAccess = (userRole: string, resource: string): boolean => {
 
 ```typescript
 // src/server/api/middleware/auth.ts
-import { TRPCError } from '@trpc/server';
-import { hasRole, canAccess } from '@/lib/auth-utils';
+import { TRPCError } from "@trpc/server";
+import { hasRole, canAccess } from "@/lib/auth-utils";
 
 export const requireAuth = (requiredRole?: string) => {
   return async ({ ctx, next }: any) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You must be logged in to access this resource',
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this resource",
       });
     }
 
     if (requiredRole && !hasRole(ctx.session.user.role, requiredRole)) {
       throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'You do not have permission to access this resource',
+        code: "FORBIDDEN",
+        message: "You do not have permission to access this resource",
       });
     }
 
@@ -487,15 +494,15 @@ export const requirePermission = (permission: string) => {
   return async ({ ctx, next }: any) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'You must be logged in to access this resource',
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this resource",
       });
     }
 
     if (!canAccess(ctx.session.user.role, permission)) {
       throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'You do not have permission to perform this action',
+        code: "FORBIDDEN",
+        message: "You do not have permission to perform this action",
       });
     }
 
@@ -515,24 +522,24 @@ export const requirePermission = (permission: string) => {
 
 ```typescript
 // src/types/auth.ts
-import { DefaultSession } from 'next-auth';
+import { DefaultSession } from "next-auth";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: 'TEACHER' | 'ADMIN';
-    } & DefaultSession['user'];
+      role: "TEACHER" | "ADMIN";
+    } & DefaultSession["user"];
   }
 
   interface User {
-    role: 'TEACHER' | 'ADMIN';
+    role: "TEACHER" | "ADMIN";
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module "next-auth/jwt" {
   interface JWT {
-    role: 'TEACHER' | 'ADMIN';
+    role: "TEACHER" | "ADMIN";
   }
 }
 ```
@@ -541,8 +548,8 @@ declare module 'next-auth/jwt' {
 
 ```typescript
 // src/lib/session-utils.ts
-import { getServerSession } from 'next-auth';
-import { authOptions } from './auth';
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth";
 
 export const getServerAuthSession = () => {
   return getServerSession(authOptions);
@@ -550,21 +557,21 @@ export const getServerAuthSession = () => {
 
 export const requireServerAuth = async () => {
   const session = await getServerAuthSession();
-  
+
   if (!session) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
-  
+
   return session;
 };
 
 export const requireServerRole = async (requiredRole: string) => {
   const session = await requireServerAuth();
-  
+
   if (!hasRole(session.user.role, requiredRole)) {
-    throw new Error('Forbidden');
+    throw new Error("Forbidden");
   }
-  
+
   return session;
 };
 ```
@@ -575,7 +582,7 @@ export const requireServerRole = async (requiredRole: string) => {
 
 ```typescript
 // src/lib/password.ts
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
 export const hashPassword = async (password: string): Promise<string> => {
   const saltRounds = 12;
@@ -584,34 +591,36 @@ export const hashPassword = async (password: string): Promise<string> => {
 
 export const verifyPassword = async (
   password: string,
-  hashedPassword: string
+  hashedPassword: string,
 ): Promise<boolean> => {
   return bcrypt.compare(password, hashedPassword);
 };
 
-export const validatePassword = (password: string): { isValid: boolean; errors: string[] } => {
+export const validatePassword = (
+  password: string,
+): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  
+
   if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
+    errors.push("Password must be at least 8 characters long");
   }
-  
+
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
-  
+
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
-  
+
   if (!/[0-9]/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
-  
+
   if (!/[^A-Za-z0-9]/.test(password)) {
-    errors.push('Password must contain at least one special character');
+    errors.push("Password must contain at least one special character");
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -623,12 +632,12 @@ export const validatePassword = (password: string): { isValid: boolean; errors: 
 
 ```typescript
 // src/lib/password-reset.ts
-import crypto from 'crypto';
-import { db } from './db';
-import { sendEmail } from './email';
+import crypto from "crypto";
+import { db } from "./db";
+import { sendEmail } from "./email";
 
 export const generateResetToken = (): string => {
-  return crypto.randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString("hex");
 };
 
 export const createPasswordResetToken = async (email: string) => {
@@ -637,7 +646,7 @@ export const createPasswordResetToken = async (email: string) => {
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   const token = generateResetToken();
@@ -654,7 +663,7 @@ export const createPasswordResetToken = async (email: string) => {
   // Send reset email
   await sendEmail({
     to: email,
-    subject: 'Password Reset Request',
+    subject: "Password Reset Request",
     html: `
       <h2>Password Reset Request</h2>
       <p>You requested a password reset for your NorthPark Learning Support account.</p>
@@ -675,7 +684,7 @@ export const resetPassword = async (token: string, newPassword: string) => {
   });
 
   if (!verificationToken || verificationToken.expires < new Date()) {
-    throw new Error('Invalid or expired token');
+    throw new Error("Invalid or expired token");
   }
 
   const hashedPassword = await hashPassword(newPassword);
@@ -698,32 +707,36 @@ export const resetPassword = async (token: string, newPassword: string) => {
 
 ```typescript
 // src/lib/rate-limit.ts
-import { NextRequest } from 'next/server';
+import { NextRequest } from "next/server";
 
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
-export const rateLimit = (identifier: string, limit: number, window: number) => {
+export const rateLimit = (
+  identifier: string,
+  limit: number,
+  window: number,
+) => {
   const now = Date.now();
   const windowStart = now - window;
-  
+
   const current = rateLimitMap.get(identifier);
-  
+
   if (!current || current.resetTime < windowStart) {
     rateLimitMap.set(identifier, { count: 1, resetTime: now });
     return { success: true, remaining: limit - 1 };
   }
-  
+
   if (current.count >= limit) {
     return { success: false, remaining: 0 };
   }
-  
+
   current.count++;
   return { success: true, remaining: limit - current.count };
 };
 
 // Apply rate limiting to auth endpoints
 export const authRateLimit = (req: NextRequest) => {
-  const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown';
+  const ip = req.ip || req.headers.get("x-forwarded-for") || "unknown";
   return rateLimit(ip, 5, 900000); // 5 attempts per 15 minutes
 };
 ```
@@ -736,23 +749,23 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains',
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
           },
         ],
       },
@@ -849,7 +862,7 @@ jest.mock('next-auth/react');
 describe('SignInForm', () => {
   it('should render sign in form', () => {
     render(<SignInForm providers={{}} />);
-    
+
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
@@ -860,7 +873,7 @@ describe('SignInForm', () => {
     mockSignIn.mockResolvedValue({ error: null, status: 200, ok: true, url: null });
 
     render(<SignInForm providers={{}} />);
-    
+
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
     const submitButton = screen.getByRole('button', { name: /sign in/i });

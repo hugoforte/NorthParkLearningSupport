@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all classes
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("classes")
-      .collect();
+    return await ctx.db.query("classes").collect();
   },
 });
 
@@ -49,9 +47,7 @@ export const search = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("classes")
-      .filter((q) => 
-        q.eq(q.field("name"), args.query)
-      )
+      .filter((q) => q.eq(q.field("name"), args.query))
       .collect();
   },
 });
@@ -82,7 +78,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const classItem = await ctx.db.get(id);
     if (!classItem) {
       throw new Error("Class not found");

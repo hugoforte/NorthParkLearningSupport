@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { TeacherForm } from '@/components/teachers/teacher-form';
+import { useRouter } from "next/navigation";
+import { TeacherForm } from "@/components/teachers/teacher-form";
 
 export default function AddTeacherPage() {
   const router = useRouter();
 
   const handleSuccess = () => {
-    router.push('/teachers');
+    router.push("/teachers");
   };
 
   const handleCancel = () => {
-    router.push('/teachers');
+    router.push("/teachers");
   };
 
   return (

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { NoteList } from '@/components/notes/note-list';
+import { NoteList } from "@/components/notes/note-list";
 
 export default function NotesPage() {
   return (

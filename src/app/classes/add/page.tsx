@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { ClassForm } from '@/components/classes/class-form';
+import { useRouter } from "next/navigation";
+import { ClassForm } from "@/components/classes/class-form";
 
 export default function AddClassPage() {
   const router = useRouter();
 
   const handleSuccess = () => {
-    router.push('/classes');
+    router.push("/classes");
   };
 
   const handleCancel = () => {
-    router.push('/classes');
+    router.push("/classes");
   };
 
   return (

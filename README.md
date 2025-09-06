@@ -31,7 +31,7 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recommended) or npm
 
 ### Installation
@@ -98,16 +98,19 @@ pnpm format:write # Format code with Prettier
 ## 🔧 Development Features
 
 ### Type Safety
+
 - End-to-end TypeScript with strict configuration
 - Environment variable validation with Zod
 - Path aliases for clean imports (`~/` prefix)
 
 ### Performance
+
 - Next.js Turbo mode for faster development
 - Optimized build configuration
 - Modern ES2022 target for better performance
 
 ### Developer Experience
+
 - Hot reload with Next.js
 - Automatic code formatting with Prettier
 - TypeScript error checking in real-time
@@ -143,12 +146,14 @@ NODE_ENV=production
 ## 📚 Learn More
 
 ### T3 Stack Resources
+
 - [T3 Stack Documentation](https://create.t3.gg/)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 
 ### Project-Specific
+
 - This project uses the latest T3 Stack version (7.39.3)
 - Built with create-t3-app scaffolding
 - Follows T3 Stack best practices and conventions

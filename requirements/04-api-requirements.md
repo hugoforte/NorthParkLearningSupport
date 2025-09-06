@@ -125,7 +125,7 @@ export const getById = query({
           class: classData,
           grade,
         };
-      })
+      }),
     );
 
     return {
@@ -223,17 +223,19 @@ export const assignToClass = mutation({
 
 ```typescript
 // src/server/api/routers/students.ts
-import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure, adminProcedure } from '../trpc';
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 
 export const studentsRouter = createTRPCRouter({
   // Get students by class
   getByClass: protectedProcedure
-    .input(z.object({
-      classId: z.string(),
-      page: z.number().min(1).default(1),
-      limit: z.number().min(1).max(100).default(50),
-    }))
+    .input(
+      z.object({
+        classId: z.string(),
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(50),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const skip = (input.page - 1) * input.limit;
 
@@ -255,10 +257,7 @@ export const studentsRouter = createTRPCRouter({
               },
             },
           },
-          orderBy: [
-            { lastName: 'asc' },
-            { firstName: 'asc' },
-          ],
+          orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
           skip,
           take: input.limit,
         }),
@@ -283,18 +282,20 @@ export const studentsRouter = createTRPCRouter({
 
   // Search students
   search: protectedProcedure
-    .input(z.object({
-      query: z.string().min(1),
-      classId: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        query: z.string().min(1),
+        classId: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       return ctx.db.student.findMany({
         where: {
           AND: [
             {
               OR: [
-                { firstName: { contains: input.query, mode: 'insensitive' } },
-                { lastName: { contains: input.query, mode: 'insensitive' } },
+                { firstName: { contains: input.query, mode: "insensitive" } },
+                { lastName: { contains: input.query, mode: "insensitive" } },
               ],
             },
             input.classId ? { classId: input.classId } : {},
@@ -313,10 +314,7 @@ export const studentsRouter = createTRPCRouter({
             },
           },
         },
-        orderBy: [
-          { lastName: 'asc' },
-          { firstName: 'asc' },
-        ],
+        orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
         take: 20,
       });
     }),
@@ -342,7 +340,7 @@ export const studentsRouter = createTRPCRouter({
                 },
               },
             },
-            orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: "desc" },
           },
         },
       });
@@ -350,13 +348,15 @@ export const studentsRouter = createTRPCRouter({
 
   // Create student (admin only)
   create: adminProcedure
-    .input(z.object({
-      firstName: z.string().min(1).max(50),
-      lastName: z.string().min(1).max(50),
-      classId: z.string(),
-      studentId: z.string().optional(),
-      dateOfBirth: z.date().optional(),
-    }))
+    .input(
+      z.object({
+        firstName: z.string().min(1).max(50),
+        lastName: z.string().min(1).max(50),
+        classId: z.string(),
+        studentId: z.string().optional(),
+        dateOfBirth: z.date().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.student.create({
         data: input,
@@ -372,15 +372,17 @@ export const studentsRouter = createTRPCRouter({
 
   // Update student (admin only)
   update: adminProcedure
-    .input(z.object({
-      id: z.string(),
-      firstName: z.string().min(1).max(50).optional(),
-      lastName: z.string().min(1).max(50).optional(),
-      classId: z.string().optional(),
-      studentId: z.string().optional(),
-      dateOfBirth: z.date().optional(),
-      isActive: z.boolean().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        firstName: z.string().min(1).max(50).optional(),
+        lastName: z.string().min(1).max(50).optional(),
+        classId: z.string().optional(),
+        studentId: z.string().optional(),
+        dateOfBirth: z.date().optional(),
+        isActive: z.boolean().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { id, ...updateData } = input;
       return ctx.db.student.update({
@@ -404,62 +406,57 @@ export const studentsRouter = createTRPCRouter({
 
 ```typescript
 // src/server/api/routers/classes.ts
-import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure, adminProcedure } from '../trpc';
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 
 export const classesRouter = createTRPCRouter({
   // Get classes for current user
-  getMyClasses: protectedProcedure
-    .query(async ({ ctx }) => {
-      return ctx.db.classAssignment.findMany({
-        where: {
-          userId: ctx.session.user.id,
-        },
-        include: {
-          class: {
-            include: {
-              grade: true,
-              _count: {
-                select: {
-                  students: {
-                    where: { isActive: true },
-                  },
+  getMyClasses: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.classAssignment.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      include: {
+        class: {
+          include: {
+            grade: true,
+            _count: {
+              select: {
+                students: {
+                  where: { isActive: true },
                 },
               },
             },
           },
         },
-        orderBy: {
-          class: {
-            grade: { level: 'asc' },
-            name: 'asc',
-          },
+      },
+      orderBy: {
+        class: {
+          grade: { level: "asc" },
+          name: "asc",
         },
-      });
-    }),
+      },
+    });
+  }),
 
   // Get all classes (admin only)
-  getAll: adminProcedure
-    .query(async ({ ctx }) => {
-      return ctx.db.class.findMany({
-        where: { isActive: true },
-        include: {
-          grade: true,
-          _count: {
-            select: {
-              students: {
-                where: { isActive: true },
-              },
-              classAssignments: true,
+  getAll: adminProcedure.query(async ({ ctx }) => {
+    return ctx.db.class.findMany({
+      where: { isActive: true },
+      include: {
+        grade: true,
+        _count: {
+          select: {
+            students: {
+              where: { isActive: true },
             },
+            classAssignments: true,
           },
         },
-        orderBy: [
-          { grade: { level: 'asc' } },
-          { name: 'asc' },
-        ],
-      });
-    }),
+      },
+      orderBy: [{ grade: { level: "asc" } }, { name: "asc" }],
+    });
+  }),
 
   // Get class by ID
   getById: protectedProcedure
@@ -471,10 +468,7 @@ export const classesRouter = createTRPCRouter({
           grade: true,
           students: {
             where: { isActive: true },
-            orderBy: [
-              { lastName: 'asc' },
-              { firstName: 'asc' },
-            ],
+            orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
           },
           classAssignments: {
             include: {
@@ -493,11 +487,13 @@ export const classesRouter = createTRPCRouter({
 
   // Create class (admin only)
   create: adminProcedure
-    .input(z.object({
-      name: z.string().min(2).max(100),
-      gradeId: z.string(),
-      description: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        name: z.string().min(2).max(100),
+        gradeId: z.string(),
+        description: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.class.create({
         data: input,
@@ -509,13 +505,15 @@ export const classesRouter = createTRPCRouter({
 
   // Update class (admin only)
   update: adminProcedure
-    .input(z.object({
-      id: z.string(),
-      name: z.string().min(2).max(100).optional(),
-      gradeId: z.string().optional(),
-      description: z.string().optional(),
-      isActive: z.boolean().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(2).max(100).optional(),
+        gradeId: z.string().optional(),
+        description: z.string().optional(),
+        isActive: z.boolean().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { id, ...updateData } = input;
       return ctx.db.class.update({
@@ -535,18 +533,22 @@ export const classesRouter = createTRPCRouter({
 
 ```typescript
 // src/server/api/routers/notes.ts
-import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const notesRouter = createTRPCRouter({
   // Get notes for a student
   getByStudent: protectedProcedure
-    .input(z.object({
-      studentId: z.string(),
-      page: z.number().min(1).default(1),
-      limit: z.number().min(1).max(100).default(20),
-      category: z.enum(['ACADEMIC', 'BEHAVIOR', 'SOCIAL', 'HEALTH', 'OTHER']).optional(),
-    }))
+    .input(
+      z.object({
+        studentId: z.string(),
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(20),
+        category: z
+          .enum(["ACADEMIC", "BEHAVIOR", "SOCIAL", "HEALTH", "OTHER"])
+          .optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const skip = (input.page - 1) * input.limit;
 
@@ -566,7 +568,7 @@ export const notesRouter = createTRPCRouter({
               },
             },
           },
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           skip,
           take: input.limit,
         }),
@@ -586,12 +588,14 @@ export const notesRouter = createTRPCRouter({
 
   // Create note
   create: protectedProcedure
-    .input(z.object({
-      studentId: z.string(),
-      category: z.enum(['ACADEMIC', 'BEHAVIOR', 'SOCIAL', 'HEALTH', 'OTHER']),
-      content: z.string().min(10).max(10000),
-      isPrivate: z.boolean().default(false),
-    }))
+    .input(
+      z.object({
+        studentId: z.string(),
+        category: z.enum(["ACADEMIC", "BEHAVIOR", "SOCIAL", "HEALTH", "OTHER"]),
+        content: z.string().min(10).max(10000),
+        isPrivate: z.boolean().default(false),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.note.create({
         data: {
@@ -618,12 +622,16 @@ export const notesRouter = createTRPCRouter({
 
   // Update note (only by author)
   update: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-      category: z.enum(['ACADEMIC', 'BEHAVIOR', 'SOCIAL', 'HEALTH', 'OTHER']).optional(),
-      content: z.string().min(10).max(10000).optional(),
-      isPrivate: z.boolean().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        category: z
+          .enum(["ACADEMIC", "BEHAVIOR", "SOCIAL", "HEALTH", "OTHER"])
+          .optional(),
+        content: z.string().min(10).max(10000).optional(),
+        isPrivate: z.boolean().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { id, ...updateData } = input;
 
@@ -636,7 +644,7 @@ export const notesRouter = createTRPCRouter({
       });
 
       if (!note) {
-        throw new Error('Note not found or unauthorized');
+        throw new Error("Note not found or unauthorized");
       }
 
       return ctx.db.note.update({
@@ -673,7 +681,7 @@ export const notesRouter = createTRPCRouter({
       });
 
       if (!note) {
-        throw new Error('Note not found or unauthorized');
+        throw new Error("Note not found or unauthorized");
       }
 
       return ctx.db.note.delete({
@@ -718,17 +726,16 @@ export const notesRouter = createTRPCRouter({
 
 ```typescript
 // src/server/api/routers/grades.ts
-import { createTRPCRouter, publicProcedure, adminProcedure } from '../trpc';
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 
 export const gradesRouter = createTRPCRouter({
   // Get all grades
-  getAll: publicProcedure
-    .query(async ({ ctx }) => {
-      return ctx.db.grade.findMany({
-        where: { isActive: true },
-        orderBy: { level: 'asc' },
-      });
-    }),
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.grade.findMany({
+      where: { isActive: true },
+      orderBy: { level: "asc" },
+    });
+  }),
 
   // Get grade by ID
   getById: publicProcedure
@@ -765,19 +772,19 @@ export class AppError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode: number = 500
+    public statusCode: number = 500,
   ) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
   }
 }
 
 export const errors = {
-  UNAUTHORIZED: new AppError('Unauthorized', 'UNAUTHORIZED', 401),
-  FORBIDDEN: new AppError('Forbidden', 'FORBIDDEN', 403),
-  NOT_FOUND: new AppError('Not found', 'NOT_FOUND', 404),
-  VALIDATION_ERROR: new AppError('Validation error', 'VALIDATION_ERROR', 400),
-  INTERNAL_ERROR: new AppError('Internal server error', 'INTERNAL_ERROR', 500),
+  UNAUTHORIZED: new AppError("Unauthorized", "UNAUTHORIZED", 401),
+  FORBIDDEN: new AppError("Forbidden", "FORBIDDEN", 403),
+  NOT_FOUND: new AppError("Not found", "NOT_FOUND", 404),
+  VALIDATION_ERROR: new AppError("Validation error", "VALIDATION_ERROR", 400),
+  INTERNAL_ERROR: new AppError("Internal server error", "INTERNAL_ERROR", 500),
 };
 ```
 
@@ -785,8 +792,8 @@ export const errors = {
 
 ```typescript
 // src/server/api/trpc.ts
-import { TRPCError } from '@trpc/server';
-import { AppError } from './errors';
+import { TRPCError } from "@trpc/server";
+import { AppError } from "./errors";
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Context creation logic
@@ -808,8 +815,8 @@ export const t = initTRPC.context<typeof createTRPCContext>().create({
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You must be logged in to access this resource',
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to access this resource",
     });
   }
   return next({
@@ -821,10 +828,10 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 
 export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.session.user.role !== 'ADMIN') {
+  if (ctx.session.user.role !== "ADMIN") {
     throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'Admin access required',
+      code: "FORBIDDEN",
+      message: "Admin access required",
     });
   }
   return next({ ctx });
@@ -837,41 +844,45 @@ export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 ```typescript
 // src/server/api/middleware/rateLimit.ts
-import { NextRequest } from 'next/server';
+import { NextRequest } from "next/server";
 
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
-export const rateLimit = (identifier: string, limit: number, window: number) => {
+export const rateLimit = (
+  identifier: string,
+  limit: number,
+  window: number,
+) => {
   const now = Date.now();
   const windowStart = now - window;
-  
+
   const current = rateLimitMap.get(identifier);
-  
+
   if (!current || current.resetTime < windowStart) {
     rateLimitMap.set(identifier, { count: 1, resetTime: now });
     return { success: true, remaining: limit - 1 };
   }
-  
+
   if (current.count >= limit) {
     return { success: false, remaining: 0 };
   }
-  
+
   current.count++;
   return { success: true, remaining: limit - current.count };
 };
 
 export const rateLimitMiddleware = (limit: number, window: number) => {
   return async ({ ctx, next }: any) => {
-    const identifier = ctx.session?.user?.id || 'anonymous';
+    const identifier = ctx.session?.user?.id || "anonymous";
     const result = rateLimit(identifier, limit, window);
-    
+
     if (!result.success) {
       throw new TRPCError({
-        code: 'TOO_MANY_REQUESTS',
-        message: 'Rate limit exceeded',
+        code: "TOO_MANY_REQUESTS",
+        message: "Rate limit exceeded",
       });
     }
-    
+
     return next({ ctx });
   };
 };
@@ -883,14 +894,14 @@ export const rateLimitMiddleware = (limit: number, window: number) => {
 
 ```typescript
 // src/server/api/openapi.ts
-import { generateOpenApiDocument } from 'trpc-openapi';
-import { appRouter } from './root';
+import { generateOpenApiDocument } from "trpc-openapi";
+import { appRouter } from "./root";
 
 export const openApiDocument = generateOpenApiDocument(appRouter, {
-  title: 'NorthPark Learning Support API',
-  description: 'API documentation for NorthPark Learning Support application',
-  version: '1.0.0',
-  baseUrl: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+  title: "NorthPark Learning Support API",
+  description: "API documentation for NorthPark Learning Support application",
+  version: "1.0.0",
+  baseUrl: process.env.NEXTAUTH_URL || "http://localhost:3000",
 });
 ```
 
@@ -900,26 +911,26 @@ export const openApiDocument = generateOpenApiDocument(appRouter, {
 
 ```typescript
 // src/__tests__/api/notes.test.ts
-import { createMocks } from 'node-mocks-http';
-import { appRouter } from '@/server/api/root';
+import { createMocks } from "node-mocks-http";
+import { appRouter } from "@/server/api/root";
 
-describe('Notes API', () => {
-  it('should create a note', async () => {
+describe("Notes API", () => {
+  it("should create a note", async () => {
     const caller = appRouter.createCaller({
-      session: { user: { id: 'user-1', role: 'TEACHER' } },
+      session: { user: { id: "user-1", role: "TEACHER" } },
       db: mockDb,
     });
 
     const result = await caller.notes.create({
-      studentId: 'student-1',
-      category: 'ACADEMIC',
-      content: 'Student showed improvement in math',
+      studentId: "student-1",
+      category: "ACADEMIC",
+      content: "Student showed improvement in math",
     });
 
     expect(result).toMatchObject({
-      studentId: 'student-1',
-      category: 'ACADEMIC',
-      content: 'Student showed improvement in math',
+      studentId: "student-1",
+      category: "ACADEMIC",
+      content: "Student showed improvement in math",
     });
   });
 });

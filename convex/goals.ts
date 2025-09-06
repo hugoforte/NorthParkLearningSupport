@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all goals
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("goals")
-      .collect();
+    return await ctx.db.query("goals").collect();
   },
 });
 
@@ -66,9 +64,9 @@ export const getPending = query({
 
 // Get goals by student and completion status
 export const getByStudentAndStatus = query({
-  args: { 
+  args: {
     studentId: v.id("students"),
-    isCompleted: v.boolean()
+    isCompleted: v.boolean(),
   },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -81,14 +79,14 @@ export const getByStudentAndStatus = query({
 
 // Get goals by status
 export const getByStatus = query({
-  args: { 
+  args: {
     status: v.union(
       v.literal("NOT_STARTED"),
       v.literal("IN_PROGRESS"),
       v.literal("COMPLETED"),
       v.literal("ON_HOLD"),
-      v.literal("CANCELLED")
-    )
+      v.literal("CANCELLED"),
+    ),
   },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -105,13 +103,15 @@ export const create = mutation({
     authorId: v.id("teachers"),
     subjectIds: v.array(v.id("subjects")),
     note: v.string(),
-    status: v.optional(v.union(
-      v.literal("NOT_STARTED"),
-      v.literal("IN_PROGRESS"),
-      v.literal("COMPLETED"),
-      v.literal("ON_HOLD"),
-      v.literal("CANCELLED")
-    )),
+    status: v.optional(
+      v.union(
+        v.literal("NOT_STARTED"),
+        v.literal("IN_PROGRESS"),
+        v.literal("COMPLETED"),
+        v.literal("ON_HOLD"),
+        v.literal("CANCELLED"),
+      ),
+    ),
     targetDate: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -130,18 +130,20 @@ export const update = mutation({
     subjectIds: v.optional(v.array(v.id("subjects"))),
     note: v.optional(v.string()),
     isCompleted: v.optional(v.boolean()),
-    status: v.optional(v.union(
-      v.literal("NOT_STARTED"),
-      v.literal("IN_PROGRESS"),
-      v.literal("COMPLETED"),
-      v.literal("ON_HOLD"),
-      v.literal("CANCELLED")
-    )),
+    status: v.optional(
+      v.union(
+        v.literal("NOT_STARTED"),
+        v.literal("IN_PROGRESS"),
+        v.literal("COMPLETED"),
+        v.literal("ON_HOLD"),
+        v.literal("CANCELLED"),
+      ),
+    ),
     targetDate: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const goal = await ctx.db.get(id);
     if (!goal) {
       throw new Error("Goal not found");
@@ -160,7 +162,10 @@ export const markCompleted = mutation({
       throw new Error("Goal not found");
     }
 
-    return await ctx.db.patch(args.id, { isCompleted: true, status: "COMPLETED" });
+    return await ctx.db.patch(args.id, {
+      isCompleted: true,
+      status: "COMPLETED",
+    });
   },
 });
 
@@ -173,21 +178,24 @@ export const markPending = mutation({
       throw new Error("Goal not found");
     }
 
-    return await ctx.db.patch(args.id, { isCompleted: false, status: "NOT_STARTED" });
+    return await ctx.db.patch(args.id, {
+      isCompleted: false,
+      status: "NOT_STARTED",
+    });
   },
 });
 
 // Update goal status
 export const updateStatus = mutation({
-  args: { 
+  args: {
     id: v.id("goals"),
     status: v.union(
       v.literal("NOT_STARTED"),
       v.literal("IN_PROGRESS"),
       v.literal("COMPLETED"),
       v.literal("ON_HOLD"),
-      v.literal("CANCELLED")
-    )
+      v.literal("CANCELLED"),
+    ),
   },
   handler: async (ctx, args) => {
     const goal = await ctx.db.get(args.id);

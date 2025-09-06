@@ -4,9 +4,7 @@ import { v } from "convex/values";
 // Get all notes
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("notes")
-      .collect();
+    return await ctx.db.query("notes").collect();
   },
 });
 
@@ -46,13 +44,15 @@ export const getByAuthor = query({
 
 // Get notes by category
 export const getByCategory = query({
-  args: { category: v.union(
-    v.literal("ACADEMIC"),
-    v.literal("BEHAVIOR"),
-    v.literal("SOCIAL"),
-    v.literal("HEALTH"),
-    v.literal("OTHER")
-  ) },
+  args: {
+    category: v.union(
+      v.literal("ACADEMIC"),
+      v.literal("BEHAVIOR"),
+      v.literal("SOCIAL"),
+      v.literal("HEALTH"),
+      v.literal("OTHER"),
+    ),
+  },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("notes")
@@ -93,7 +93,7 @@ export const create = mutation({
       v.literal("BEHAVIOR"),
       v.literal("SOCIAL"),
       v.literal("HEALTH"),
-      v.literal("OTHER")
+      v.literal("OTHER"),
     ),
     content: v.string(),
     isPrivate: v.boolean(),
@@ -107,19 +107,21 @@ export const create = mutation({
 export const update = mutation({
   args: {
     id: v.id("notes"),
-    category: v.optional(v.union(
-      v.literal("ACADEMIC"),
-      v.literal("BEHAVIOR"),
-      v.literal("SOCIAL"),
-      v.literal("HEALTH"),
-      v.literal("OTHER")
-    )),
+    category: v.optional(
+      v.union(
+        v.literal("ACADEMIC"),
+        v.literal("BEHAVIOR"),
+        v.literal("SOCIAL"),
+        v.literal("HEALTH"),
+        v.literal("OTHER"),
+      ),
+    ),
     content: v.optional(v.string()),
     isPrivate: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const note = await ctx.db.get(id);
     if (!note) {
       throw new Error("Note not found");

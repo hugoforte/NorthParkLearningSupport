@@ -18,14 +18,14 @@ export const populateGrades = mutation({
     ];
 
     const results = [];
-    
+
     for (const grade of grades) {
       // Check if grade already exists
       const existing = await ctx.db
         .query("grades")
         .withIndex("by_level", (q) => q.eq("level", grade.level))
         .first();
-      
+
       if (!existing) {
         const id = await ctx.db.insert("grades", {
           ...grade,
@@ -33,10 +33,14 @@ export const populateGrades = mutation({
         });
         results.push({ action: "created", id, grade: grade.name });
       } else {
-        results.push({ action: "skipped", id: existing._id, grade: grade.name });
+        results.push({
+          action: "skipped",
+          id: existing._id,
+          grade: grade.name,
+        });
       }
     }
-    
+
     return results;
   },
 });
@@ -46,11 +50,11 @@ export const clearGrades = mutation({
   args: {},
   handler: async (ctx) => {
     const allGrades = await ctx.db.query("grades").collect();
-    
+
     for (const grade of allGrades) {
       await ctx.db.delete(grade._id);
     }
-    
+
     return { deleted: allGrades.length };
   },
 });
@@ -61,10 +65,16 @@ export const populateSubjects = mutation({
   handler: async (ctx) => {
     const subjects = [
       { name: "Mathematics", description: "Math and numerical skills" },
-      { name: "English Language Arts", description: "Reading, writing, and communication" },
+      {
+        name: "English Language Arts",
+        description: "Reading, writing, and communication",
+      },
       { name: "Science", description: "Scientific inquiry and discovery" },
       { name: "Social Studies", description: "History, geography, and civics" },
-      { name: "Physical Education", description: "Physical fitness and health" },
+      {
+        name: "Physical Education",
+        description: "Physical fitness and health",
+      },
       { name: "Art", description: "Creative expression and visual arts" },
       { name: "Music", description: "Musical education and appreciation" },
       { name: "Foreign Language", description: "Second language learning" },
@@ -73,14 +83,14 @@ export const populateSubjects = mutation({
     ];
 
     const results = [];
-    
+
     for (const subject of subjects) {
       // Check if subject already exists
       const existing = await ctx.db
         .query("subjects")
         .withIndex("by_name", (q) => q.eq("name", subject.name))
         .first();
-      
+
       if (!existing) {
         const id = await ctx.db.insert("subjects", {
           ...subject,
@@ -88,10 +98,14 @@ export const populateSubjects = mutation({
         });
         results.push({ action: "created", id, subject: subject.name });
       } else {
-        results.push({ action: "skipped", id: existing._id, subject: subject.name });
+        results.push({
+          action: "skipped",
+          id: existing._id,
+          subject: subject.name,
+        });
       }
     }
-    
+
     return results;
   },
 });
