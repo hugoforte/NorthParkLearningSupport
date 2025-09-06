@@ -36,7 +36,7 @@ function AddGoalPageContent() {
         </div>
 
         <GoalForm
-          initialStudentId={studentId || undefined}
+          initialStudentId={studentId ?? undefined}
           onSuccess={handleSuccess}
           onCancel={handleCancel}
         />

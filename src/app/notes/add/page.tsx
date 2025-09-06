@@ -36,7 +36,7 @@ function AddNotePageContent() {
         </div>
 
         <NoteForm
-          initialStudentId={studentId || undefined}
+          initialStudentId={studentId ?? undefined}
           onSuccess={handleSuccess}
           onCancel={handleCancel}
         />

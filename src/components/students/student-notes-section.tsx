@@ -52,7 +52,7 @@ export const StudentNotesSection = ({
 
   const getCategoryInfo = (category: string) => {
     return (
-      categoryOptions.find((opt) => opt.value === category) ||
+      categoryOptions.find((opt) => opt.value === category) ??
       categoryOptions[4]
     );
   };

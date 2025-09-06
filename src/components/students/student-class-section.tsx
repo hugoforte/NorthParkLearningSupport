@@ -23,9 +23,7 @@ interface StudentClassSectionProps {
 
 export const StudentClassSection = ({ student }: StudentClassSectionProps) => {
   const classItem = useQuery(api.classes.getById, { id: student.classId });
-  const grade = classItem?.gradeId
-    ? useQuery(api.grades.getById, { id: classItem.gradeId })
-    : undefined;
+  const grade = useQuery(api.grades.getById, { id: classItem?.gradeId ?? "" });
   const assignments = useQuery(api.classAssignments.getByClass, {
     classId: student.classId,
   });

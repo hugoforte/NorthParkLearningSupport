@@ -98,12 +98,7 @@ export const GoalForm = ({
           id: goal._id,
           subjectIds: selectedSubjects as Id<"subjects">[],
           note,
-          status: status as
-            | "NOT_STARTED"
-            | "IN_PROGRESS"
-            | "COMPLETED"
-            | "ON_HOLD"
-            | "CANCELLED",
+          status,
           targetDate: targetDateTimestamp,
         });
       } else {
@@ -112,12 +107,7 @@ export const GoalForm = ({
           authorId: authorId as Id<"teachers">,
           subjectIds: selectedSubjects as Id<"subjects">[],
           note,
-          status: status as
-            | "NOT_STARTED"
-            | "IN_PROGRESS"
-            | "COMPLETED"
-            | "ON_HOLD"
-            | "CANCELLED",
+          status,
           targetDate: targetDateTimestamp,
         });
       }

@@ -83,7 +83,7 @@ export const StudentGoalsSection = ({
 
   const getStatusInfo = (status: string) => {
     return (
-      statusOptions.find((opt) => opt.value === status) || statusOptions[0]
+      statusOptions.find((opt) => opt.value === status) ?? statusOptions[0]
     );
   };
 
