@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Users, Home, GraduationCap, Menu, BookOpen } from 'lucide-react';
+import { Users, Home, GraduationCap, Menu, BookOpen, UserCheck } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Teachers', href: '/teachers', icon: Users },
   { name: 'Classes', href: '/classes', icon: BookOpen },
+  { name: 'Students', href: '/students', icon: UserCheck },
 ];
 
 export const MainNav = () => {
