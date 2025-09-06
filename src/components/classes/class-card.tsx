@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Trash2, Users } from 'lucide-react';
+import { Edit, Trash2, Users, UserPlus } from 'lucide-react';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
@@ -28,6 +28,8 @@ export const ClassCard = ({ classItem }: ClassCardProps) => {
   const removeClass = useMutation(api.classes.remove);
   const updateClass = useMutation(api.classes.update);
   const grade = useQuery(api.grades.getById, { id: classItem.gradeId });
+  const assignments = useQuery(api.classAssignments.getByClass, { classId: classItem._id });
+  const teachers = useQuery(api.teachers.getActive);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -53,6 +55,11 @@ export const ClassCard = ({ classItem }: ClassCardProps) => {
       setIsReactivating(false);
     }
   };
+
+  const getTeacherName = (teacherId: Id<"teachers">) => {
+    const teacher = teachers?.find(t => t._id === teacherId);
+    return teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown';
+  };
   
   return (
     <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-colors">
@@ -71,6 +78,33 @@ export const ClassCard = ({ classItem }: ClassCardProps) => {
         {classItem.description && (
           <p className="text-sm text-gray-300 mb-4">{classItem.description}</p>
         )}
+        
+        {/* Assigned Teachers */}
+        {assignments && assignments.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs text-gray-400 mb-2">Assigned Teachers:</p>
+            <div className="flex flex-wrap gap-1">
+              {assignments.slice(0, 2).map((assignment) => (
+                <Badge 
+                  key={assignment._id}
+                  variant="outline"
+                  className="text-xs border-gray-600 text-gray-300"
+                >
+                  {getTeacherName(assignment.teacherId)}
+                </Badge>
+              ))}
+              {assignments.length > 2 && (
+                <Badge 
+                  variant="outline"
+                  className="text-xs border-gray-600 text-gray-300"
+                >
+                  +{assignments.length - 2} more
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <Badge 
             variant={classItem.isActive ? "default" : "secondary"}
@@ -82,6 +116,11 @@ export const ClassCard = ({ classItem }: ClassCardProps) => {
             {classItem.isActive ? "Active" : "Inactive"}
           </Badge>
           <div className="flex space-x-2">
+            <Link href={`/classes/${classItem._id}/assignments`}>
+              <Button variant="outline" size="sm" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
+                <UserPlus className="h-4 w-4" />
+              </Button>
+            </Link>
             <Link href={`/classes/edit/${classItem._id}`}>
               <Button variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
                 <Edit className="h-4 w-4" />
