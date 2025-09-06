@@ -87,9 +87,15 @@ export const NoteCard = ({ note }: NoteCardProps) => {
           </div>
           <div className="flex items-center space-x-2">
             {note.isPrivate ? (
-              <Lock className="h-4 w-4 text-yellow-400" title="Private Note" />
+              <div className="flex items-center space-x-1">
+                <Lock className="h-4 w-4 text-yellow-400" />
+                <span className="text-xs text-yellow-400">Private</span>
+              </div>
             ) : (
-              <Eye className="h-4 w-4 text-green-400" title="Public Note" />
+              <div className="flex items-center space-x-1">
+                <Eye className="h-4 w-4 text-green-400" />
+                <span className="text-xs text-green-400">Public</span>
+              </div>
             )}
           </div>
         </div>
