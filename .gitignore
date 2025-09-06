@@ -10,10 +10,6 @@
 /coverage
 *.lcov
 
-# Convex
-/convex/_generated
-.convex/
-
 # next.js
 /.next/
 /out/
