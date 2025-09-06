@@ -86,7 +86,8 @@ export const NoteList = () => {
       return true;
     })
     .sort((a, b) => {
-      let aValue: any, bValue: any;
+      let aValue: string | number;
+      let bValue: string | number;
       
       switch (sortField) {
         case 'student':
