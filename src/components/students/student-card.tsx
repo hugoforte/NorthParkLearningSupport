@@ -56,11 +56,6 @@ export const StudentCard = ({ student }: StudentCardProps) => {
     }
   };
 
-  const formatDateOfBirth = (timestamp?: number) => {
-    if (!timestamp) return 'Not provided';
-    return new Date(timestamp).toLocaleDateString();
-  };
-
   const calculateAge = (timestamp?: number) => {
     if (!timestamp) return null;
     const today = new Date();
@@ -85,7 +80,7 @@ export const StudentCard = ({ student }: StudentCardProps) => {
               {student.firstName} {student.lastName}
             </CardTitle>
             <p className="text-sm text-gray-400">
-              {classItem?.name || 'Loading...'}
+              {classItem?.name ?? 'Loading...'}
             </p>
           </div>
         </div>
