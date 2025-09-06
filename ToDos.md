@@ -1,5 +1,6 @@
 - [x] Make it deploy (Vercel)
-- [ ] Attach database to UI (fetch actual teachers)
+- [x] Attach database to UI (fetch actual teachers)
+- [x] Add styling - make it more modern
 - [ ] Add Authentication (BetterAuth + Convex)
 - [ ] Add Analytics (Posthog)
 - [ ] Add Logging

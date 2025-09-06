@@ -20,11 +20,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body className="min-h-screen bg-gray-50">
+    <html lang="en" className={`${geist.variable} dark`}>
+      <body className="min-h-screen bg-gray-950 text-white">
         <ConvexProviderWrapper>
-          <MainNav />
-          <main>{children}</main>
+          <div className="flex min-h-screen">
+            <MainNav />
+            <main className="flex-1 px-4 py-20 md:py-10 md:px-8 max-w-[1600px] mx-auto w-full">
+              {children}
+            </main>
+          </div>
         </ConvexProviderWrapper>
       </body>
     </html>

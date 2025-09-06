@@ -55,9 +55,9 @@ export const TeacherForm = ({ teacher, onSuccess, onCancel }: TeacherFormProps) 
   };
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-md mx-auto bg-gray-800 border-gray-700">
       <CardHeader>
-        <CardTitle>{teacher ? 'Edit Teacher' : 'Add Teacher'}</CardTitle>
+        <CardTitle className="text-white">{teacher ? 'Edit Teacher' : 'Add Teacher'}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -69,34 +69,36 @@ export const TeacherForm = ({ teacher, onSuccess, onCancel }: TeacherFormProps) 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName" className="text-gray-300">First Name</Label>
               <Input
                 id="firstName"
                 value={firstName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
                 required
                 disabled={isLoading}
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName" className="text-gray-300">Last Name</Label>
               <Input
                 id="lastName"
                 value={lastName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
                 required
                 disabled={isLoading}
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
             </div>
           </div>
 
           <div className="flex justify-end space-x-2">
             {onCancel && (
-              <Button type="button" variant="outline" onClick={onCancel}>
+              <Button type="button" variant="outline" onClick={onCancel} className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
                 Cancel
               </Button>
             )}
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white">
               {isLoading ? 'Saving...' : teacher ? 'Update' : 'Create'}
             </Button>
           </div>
