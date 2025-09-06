@@ -21,9 +21,13 @@ interface StudentClassSectionProps {
   };
 }
 
+const GradeInfo = ({ gradeId }: { gradeId: Id<"grades"> }) => {
+  const grade = useQuery(api.grades.getById, { id: gradeId });
+  return <span>{grade?.name ?? "Loading..."}</span>;
+};
+
 export const StudentClassSection = ({ student }: StudentClassSectionProps) => {
   const classItem = useQuery(api.classes.getById, { id: student.classId });
-  const grade = useQuery(api.grades.getById, { id: classItem?.gradeId ?? "" });
   const assignments = useQuery(api.classAssignments.getByClass, {
     classId: student.classId,
   });
@@ -58,9 +62,13 @@ export const StudentClassSection = ({ student }: StudentClassSectionProps) => {
             <CardTitle className="text-lg text-white">
               Class Information
             </CardTitle>
-            <p className="text-sm text-gray-400">
-              {grade?.name ?? "Loading..."}
-            </p>
+             <p className="text-sm text-gray-400">
+               {classItem?.gradeId ? (
+                 <GradeInfo gradeId={classItem.gradeId} />
+               ) : (
+                 "Loading..."
+               )}
+             </p>
           </div>
         </div>
       </CardHeader>
