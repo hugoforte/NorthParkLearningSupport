@@ -1,6 +1,4 @@
 - [x] Make it deploy (Vercel)
-- [ ] Scaffold basic ui with mock data for listing teachers
-- [ ] Actually set up a database
 - [ ] Attach database to UI (fetch actual teachers)
 - [ ] Add Authentication (BetterAuth + Convex)
 - [ ] Add Analytics (Posthog)
@@ -12,4 +10,6 @@
 - [ ] Add Add Note functionality
 - [ ] Add Report - view all notes
 - [ ] Add Report - view all notes filters (By Teacher, Student, Class, Grade)
-
+- [ ] Add UploadThing support
+- [ ] Create migration - add image to teacher
+- [ ] Add ability to upload an image for the teacher
