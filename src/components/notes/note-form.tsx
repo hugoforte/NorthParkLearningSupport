@@ -19,6 +19,7 @@ interface NoteFormProps {
     content: string;
     isPrivate: boolean;
   };
+  initialStudentId?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -31,8 +32,8 @@ const categories = [
   { value: "OTHER", label: "Other" },
 ] as const;
 
-export const NoteForm = ({ note, onSuccess, onCancel }: NoteFormProps) => {
-  const [studentId, setStudentId] = useState(note?.studentId ?? '');
+export const NoteForm = ({ note, initialStudentId, onSuccess, onCancel }: NoteFormProps) => {
+  const [studentId, setStudentId] = useState(note?.studentId ?? initialStudentId ?? '');
   const [authorId, setAuthorId] = useState(note?.authorId ?? '');
   const [category, setCategory] = useState(note?.category ?? '');
   const [content, setContent] = useState(note?.content ?? '');

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Trash2, User } from 'lucide-react';
+import { Edit, Trash2, User, Eye } from 'lucide-react';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
@@ -110,6 +110,11 @@ export const StudentCard = ({ student }: StudentCardProps) => {
             {student.isActive ? "Active" : "Inactive"}
           </Badge>
           <div className="flex space-x-2">
+            <Link href={`/students/${student._id}`}>
+              <Button variant="outline" size="sm" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
+                <Eye className="h-4 w-4" />
+              </Button>
+            </Link>
             <Link href={`/students/edit/${student._id}`}>
               <Button variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
                 <Edit className="h-4 w-4" />

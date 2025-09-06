@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { NoteForm } from '@/components/notes/note-form';
+import { GoalForm } from '@/components/goals/goal-form';
 import { Suspense } from 'react';
 
-function AddNotePageContent() {
+function AddGoalPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const studentId = searchParams.get('studentId');
@@ -13,7 +13,7 @@ function AddNotePageContent() {
     if (studentId) {
       router.push(`/students/${studentId}`);
     } else {
-      router.push('/notes');
+      router.push('/goals');
     }
   };
 
@@ -21,7 +21,7 @@ function AddNotePageContent() {
     if (studentId) {
       router.push(`/students/${studentId}`);
     } else {
-      router.push('/notes');
+      router.push('/goals');
     }
   };
 
@@ -29,11 +29,11 @@ function AddNotePageContent() {
     <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Add New Note</h1>
-          <p className="text-gray-400 mt-1">Record an observation about a student</p>
+          <h1 className="text-3xl font-bold text-white">Add New Goal</h1>
+          <p className="text-gray-400 mt-1">Create a learning goal for a student</p>
         </div>
         
-        <NoteForm 
+        <GoalForm 
           initialStudentId={studentId || undefined}
           onSuccess={handleSuccess} 
           onCancel={handleCancel} 
@@ -43,7 +43,7 @@ function AddNotePageContent() {
   );
 }
 
-export default function AddNotePage() {
+export default function AddGoalPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-900 p-6">
@@ -55,7 +55,7 @@ export default function AddNotePage() {
         </div>
       </div>
     }>
-      <AddNotePageContent />
+      <AddGoalPageContent />
     </Suspense>
   );
 }

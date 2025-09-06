@@ -54,3 +54,44 @@ export const clearGrades = mutation({
     return { deleted: allGrades.length };
   },
 });
+
+// Migration to populate subjects table with common subjects
+export const populateSubjects = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const subjects = [
+      { name: "Mathematics", description: "Math and numerical skills" },
+      { name: "English Language Arts", description: "Reading, writing, and communication" },
+      { name: "Science", description: "Scientific inquiry and discovery" },
+      { name: "Social Studies", description: "History, geography, and civics" },
+      { name: "Physical Education", description: "Physical fitness and health" },
+      { name: "Art", description: "Creative expression and visual arts" },
+      { name: "Music", description: "Musical education and appreciation" },
+      { name: "Foreign Language", description: "Second language learning" },
+      { name: "Computer Science", description: "Technology and programming" },
+      { name: "Life Skills", description: "Practical life and social skills" },
+    ];
+
+    const results = [];
+    
+    for (const subject of subjects) {
+      // Check if subject already exists
+      const existing = await ctx.db
+        .query("subjects")
+        .withIndex("by_name", (q) => q.eq("name", subject.name))
+        .first();
+      
+      if (!existing) {
+        const id = await ctx.db.insert("subjects", {
+          ...subject,
+          isActive: true,
+        });
+        results.push({ action: "created", id, subject: subject.name });
+      } else {
+        results.push({ action: "skipped", id: existing._id, subject: subject.name });
+      }
+    }
+    
+    return results;
+  },
+});

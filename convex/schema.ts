@@ -72,4 +72,34 @@ export default defineSchema({
     .index("by_student", ["studentId"])
     .index("by_author", ["authorId"])
     .index("by_category", ["category"]),
+
+  // Subjects (Math, Science, English, etc.)
+  subjects: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    isActive: v.boolean(),
+  })
+    .index("by_name", ["name"])
+    .index("by_active", ["isActive"]),
+
+  // Goals (created by teachers for students)
+  goals: defineTable({
+    studentId: v.id("students"),
+    authorId: v.id("teachers"),
+    subjectIds: v.array(v.id("subjects")),
+    note: v.string(),
+    isCompleted: v.boolean(),
+    status: v.union(
+      v.literal("NOT_STARTED"),
+      v.literal("IN_PROGRESS"),
+      v.literal("COMPLETED"),
+      v.literal("ON_HOLD"),
+      v.literal("CANCELLED")
+    ),
+    targetDate: v.optional(v.number()),
+  })
+    .index("by_student", ["studentId"])
+    .index("by_author", ["authorId"])
+    .index("by_completed", ["isCompleted"])
+    .index("by_status", ["status"]),
 });
