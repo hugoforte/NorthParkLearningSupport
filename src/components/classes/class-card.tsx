@@ -63,7 +63,7 @@ export const ClassCard = ({ classItem }: ClassCardProps) => {
           </div>
           <div>
             <CardTitle className="text-lg text-white">{classItem.name}</CardTitle>
-            <p className="text-sm text-gray-400">{grade?.name || 'Loading...'}</p>
+            <p className="text-sm text-gray-400">{grade?.name ?? 'Loading...'}</p>
           </div>
         </div>
       </CardHeader>
