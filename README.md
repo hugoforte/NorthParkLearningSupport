@@ -1,30 +1,58 @@
 # NorthPark Learning Support
 
-A modern learning support platform built with the T3 Stack, designed to provide comprehensive educational resources and support services.
+A comprehensive learning support platform built with Next.js and Convex, designed to manage educational institutions, track student progress, and support learning outcomes.
 
 ## 🏗️ Architecture Overview
 
-This project follows the T3 Stack architecture pattern, providing a full-stack TypeScript application with end-to-end type safety.
+This project provides a full-stack TypeScript application with real-time data synchronization, modern UI components, and comprehensive educational management features.
 
 ### Technology Stack
 
-- **Frontend**: Next.js 15.2.3 with App Router
-- **Language**: TypeScript 5.8.2 with strict configuration
-- **Styling**: Tailwind CSS 4.0.15 with PostCSS
+- **Frontend**: Next.js 15.5.2 with App Router
+- **Backend**: Convex (real-time database and serverless functions)
+- **Language**: TypeScript with strict configuration
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Icons**: Lucide React
 - **Environment**: T3 Env with Zod validation
 - **Package Manager**: pnpm 9.14.2
-- **Code Quality**: ESLint 9.23.0 + Prettier 3.5.3
+- **Code Quality**: ESLint + Prettier
 
 ### Project Structure
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx         # Root layout with Geist font
-│   └── page.tsx           # Homepage with T3 branding
-├── styles/
-│   └── globals.css        # Global styles with Tailwind
-└── env.js                 # Environment validation with Zod
+├── app/                           # Next.js App Router
+│   ├── layout.tsx                # Root layout with navigation
+│   ├── page.tsx                  # Enhanced homepage with feature cards
+│   ├── teachers/                 # Teacher management pages
+│   ├── students/                 # Student management pages
+│   ├── classes/                  # Class management pages
+│   ├── notes/                    # Notes management pages
+│   └── goals/                    # Goals management pages
+├── components/                    # Reusable UI components
+│   ├── ui/                       # shadcn/ui components
+│   ├── navigation/               # Navigation components
+│   ├── teachers/                 # Teacher-specific components
+│   ├── students/                 # Student-specific components
+│   ├── classes/                  # Class-specific components
+│   ├── notes/                    # Notes-specific components
+│   ├── goals/                    # Goals-specific components
+│   └── providers/                # React context providers
+├── lib/                          # Utility functions
+└── styles/
+    └── globals.css               # Global styles with Tailwind
+
+convex/                           # Convex backend
+├── schema.ts                     # Database schema definition
+├── teachers.ts                   # Teacher CRUD operations
+├── students.ts                   # Student CRUD operations
+├── classes.ts                    # Class CRUD operations
+├── grades.ts                     # Grade CRUD operations
+├── notes.ts                      # Notes CRUD operations
+├── goals.ts                      # Goals CRUD operations
+├── subjects.ts                   # Subjects CRUD operations
+├── classAssignments.ts           # Class assignment operations
+└── migrations.ts                 # Database migrations
 ```
 
 ## 🚀 Getting Started
@@ -33,6 +61,7 @@ src/
 
 - Node.js 18+
 - pnpm (recommended) or npm
+- Convex account (for backend services)
 
 ### Installation
 
@@ -44,9 +73,22 @@ cd northpark-learning-support
 # Install dependencies
 pnpm install
 
-# Start development server
+# Set up Convex
+npx convex dev
+
+# Start development server (in another terminal)
 pnpm dev
 ```
+
+### Environment Setup
+
+Create a `.env.local` file with the following variables:
+
+```bash
+NEXT_PUBLIC_CONVEX_URL=your_convex_deployment_url
+```
+
+The Convex URL will be provided when you run `npx convex dev`.
 
 ### Available Scripts
 
@@ -95,26 +137,45 @@ pnpm format:write # Format code with Prettier
 - **PostCSS**: Tailwind CSS processing
 - **TypeScript**: ES2022 target with ESNext modules
 
-## 🔧 Development Features
+## ✨ Features
 
-### Type Safety
+### 🏫 Educational Management
 
-- End-to-end TypeScript with strict configuration
-- Environment variable validation with Zod
-- Path aliases for clean imports (`~/` prefix)
+- **Teacher Management**: Complete CRUD operations for teaching staff
+- **Student Management**: Track student information and progress
+- **Class Organization**: Organize students into classes with grade levels
+- **Class Assignments**: Assign teachers to classes with specific roles
 
-### Performance
+### 📚 Learning Support
 
-- Next.js Turbo mode for faster development
-- Optimized build configuration
-- Modern ES2022 target for better performance
+- **Learning Goals**: Set and track learning objectives for students
+- **Progress Tracking**: Monitor goal completion with status indicators
+- **Subject Management**: Organize goals by subject areas
+- **Notes & Observations**: Record teacher observations and student behavior
 
-### Developer Experience
+### 🎯 Student Dashboard
 
-- Hot reload with Next.js
-- Automatic code formatting with Prettier
-- TypeScript error checking in real-time
-- ESLint integration with IDE support
+- **Comprehensive View**: 360° view of each student's information
+- **Goal Tracking**: Visual progress indicators for learning goals
+- **Note History**: Chronological display of all student notes
+- **Class Information**: Current class details and assigned teachers
+- **Quick Actions**: Direct access to add goals and notes
+
+### 🎨 Modern UI/UX
+
+- **Dark Theme**: Sleek, modern dark interface
+- **Responsive Design**: Works on desktop and mobile devices
+- **Interactive Cards**: Hover effects and smooth animations
+- **Excel-like Grids**: Sortable and filterable data tables
+- **Real-time Updates**: Live data synchronization with Convex
+
+### 🔧 Technical Features
+
+- **Real-time Database**: Convex provides instant data updates
+- **Type Safety**: End-to-end TypeScript with strict configuration
+- **Modern Components**: shadcn/ui component library
+- **Optimized Performance**: Next.js 15 with App Router
+- **Code Quality**: ESLint + Prettier for consistent code
 
 ## 📁 Key Files
 
@@ -128,20 +189,99 @@ pnpm format:write # Format code with Prettier
 
 ## 🚀 Deployment
 
-This project is optimized for deployment on modern platforms:
+This project is optimized for deployment on Vercel with Convex backend services.
 
-- **Vercel** (Recommended) - Zero-config deployment
-- **Netlify** - Static site deployment
-- **Docker** - Containerized deployment
+### Vercel Deployment
+
+1. **Connect your repository to Vercel:**
+   - Go to [vercel.com](https://vercel.com)
+   - Sign in with your GitHub account
+   - Click "New Project"
+   - Import your repository
+
+2. **Configure environment variables in Vercel:**
+   - Go to your project settings
+   - Navigate to "Environment Variables"
+   - Add the following variable:
+     ```
+     NEXT_PUBLIC_CONVEX_URL=your_convex_deployment_url
+     ```
+
+3. **Deploy:**
+   - Vercel will automatically deploy on every push to main
+   - Or manually trigger deployment from the Vercel dashboard
+
+### Convex Setup
+
+1. **Create a Convex account:**
+   - Go to [convex.dev](https://convex.dev)
+   - Sign up for a free account
+   - Create a new project
+
+2. **Deploy your Convex backend:**
+   ```bash
+   # Install Convex CLI globally
+   npm install -g convex
+   
+   # Login to Convex
+   npx convex login
+   
+   # Initialize Convex in your project (if not already done)
+   npx convex dev
+   
+   # Deploy to production
+   npx convex deploy
+   ```
+
+3. **Get your deployment URL:**
+   - After running `npx convex deploy`, you'll get a deployment URL
+   - Copy this URL and add it to your Vercel environment variables as `NEXT_PUBLIC_CONVEX_URL`
+
+### Database Migrations
+
+Run the following migrations to populate your database with initial data:
+
+```bash
+# Populate grades (K-8)
+npx convex run migrations:populateGrades
+
+# Populate subjects (common subjects)
+npx convex run migrations:populateSubjects
+```
 
 ### Environment Variables
 
 Configure the following environment variables for production:
 
 ```bash
+# Required for Vercel deployment
+NEXT_PUBLIC_CONVEX_URL=your_convex_deployment_url
+
+# Optional
 NODE_ENV=production
-# Add other required environment variables as needed
 ```
+
+### Making Your App Public
+
+To make your Vercel app publicly accessible:
+
+1. **Via Vercel Dashboard:**
+   - Go to your project settings
+   - Navigate to "General"
+   - Scroll down to "Visibility"
+   - Change from "Private" to "Public"
+
+2. **Via Vercel CLI:**
+   ```bash
+   # Install Vercel CLI
+   npm install -g vercel
+   
+   # Login to Vercel
+   vercel login
+   
+   # Deploy and make public
+   vercel --prod
+   ```
 
 ## 📚 Learn More
 
