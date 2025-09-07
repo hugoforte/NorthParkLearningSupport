@@ -179,13 +179,53 @@ pnpm format:write # Format code with Prettier
 
 ## 📁 Key Files
 
-- `src/app/layout.tsx` - Root layout with font configuration
-- `src/app/page.tsx` - Homepage component
-- `src/env.js` - Environment variable validation
-- `src/styles/globals.css` - Global styles and Tailwind configuration
-- `tsconfig.json` - TypeScript configuration with strict settings
+### Frontend
+- `src/app/layout.tsx` - Root layout with navigation and Convex provider
+- `src/app/page.tsx` - Enhanced homepage with interactive feature cards
+- `src/components/navigation/main-nav.tsx` - Responsive navigation component
+- `src/components/students/student-dashboard.tsx` - Comprehensive student dashboard
+- `src/lib/utils.ts` - Utility functions for Tailwind class merging
+
+### Backend
+- `convex/schema.ts` - Database schema with all entities and relationships
+- `convex/migrations.ts` - Database migrations for initial data
+- `convex/teachers.ts` - Teacher CRUD operations
+- `convex/students.ts` - Student CRUD operations
+- `convex/goals.ts` - Goals CRUD operations with status tracking
+
+### Configuration
+- `src/env.js` - Environment variable validation with Zod
+- `tsconfig.json` - TypeScript configuration with path aliases
 - `next.config.js` - Next.js configuration
 - `eslint.config.js` - ESLint configuration with TypeScript rules
+
+## 🎯 Usage Guide
+
+### Getting Started with the Application
+
+1. **Add Teachers**: Start by adding your teaching staff
+2. **Create Classes**: Set up classes with grade levels
+3. **Add Students**: Enroll students and assign them to classes
+4. **Assign Teachers**: Assign teachers to classes with specific roles
+5. **Set Goals**: Create learning goals for students
+6. **Record Notes**: Add observations and notes about students
+
+### Navigation
+
+- **Home**: Interactive dashboard with feature overview
+- **Teachers**: Manage teaching staff and their information
+- **Students**: View student list and individual dashboards
+- **Classes**: Organize classes and manage assignments
+- **Notes**: Record and track student observations
+- **Goals**: Set and monitor learning objectives
+
+### Student Dashboard Features
+
+- **Student Info**: Personal details, age, and status
+- **Class Information**: Current class and assigned teachers
+- **Learning Goals**: Active and completed goals with status tracking
+- **Notes History**: Chronological list of all observations
+- **Quick Actions**: Direct links to add goals and notes
 
 ## 🚀 Deployment
 
@@ -285,18 +325,21 @@ To make your Vercel app publicly accessible:
 
 ## 📚 Learn More
 
-### T3 Stack Resources
+### Technology Resources
 
-- [T3 Stack Documentation](https://create.t3.gg/)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Next.js Documentation](https://nextjs.org/docs) - React framework with App Router
+- [Convex Documentation](https://docs.convex.dev/) - Real-time backend platform
+- [shadcn/ui Documentation](https://ui.shadcn.com/) - Reusable UI components
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - Utility-first CSS
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/) - Type safety
+- [Lucide Icons](https://lucide.dev/) - Beautiful icon library
 
 ### Project-Specific
 
-- This project uses the latest T3 Stack version (7.39.3)
-- Built with create-t3-app scaffolding
-- Follows T3 Stack best practices and conventions
+- Built with Next.js 15.5.2 and Convex for real-time data
+- Uses shadcn/ui components for consistent design
+- Implements comprehensive CRUD operations for educational management
+- Features real-time data synchronization and modern UI/UX patterns
 
 ## 🤝 Contributing
 
