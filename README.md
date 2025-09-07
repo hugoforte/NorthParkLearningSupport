@@ -351,4 +351,19 @@ To make your Vercel app publicly accessible:
 
 ## 📄 License
 
-This project is private and proprietary to NorthPark Learning Support.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### What this means:
+
+- ✅ **Commercial use** - Use this project in commercial applications
+- ✅ **Modification** - Modify and adapt the code for your needs
+- ✅ **Distribution** - Share and distribute the code
+- ✅ **Private use** - Use the project in private applications
+- ✅ **Patent use** - Use any patents associated with the project
+
+### Requirements:
+
+- 📝 **License and copyright notice** - Include the original license and copyright notice
+- ⚠️ **No warranty** - The software is provided "as is" without warranty
+
+This open-source license allows anyone to use, modify, and distribute this educational management platform for any purpose, including commercial use.
