@@ -16,12 +16,24 @@ import { Button } from "@/components/ui/button";
 import { createAuthClient } from "better-auth/client";
 import { useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
+import logger from "@/lib/logger";
 
-const authClient = createAuthClient();
+const authClient = createAuthClient({
+  baseURL: process.env.NODE_ENV === "production" ? undefined : "http://localhost:3000",
+  fetchOptions: {
+    credentials: "include",
+  },
+});
 
 export default function HomePage() {
   const handleGoogle = useCallback(async () => {
-    await authClient.signIn.social({ provider: "google" });
+    logger.debug("Home page: Attempting Google sign-in");
+    try {
+      await authClient.signIn.social({ provider: "google" });
+      logger.info("Home page: Google sign-in initiated successfully");
+    } catch (error) {
+      logger.error("Home page: Google sign-in failed:", error);
+    }
   }, []);
   const features = [
     {

@@ -16,7 +16,8 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { createAuthClient } from "better-auth/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import logger from "@/lib/logger";
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
@@ -27,39 +28,101 @@ const navigation = [
   { name: "Goals", href: "/goals", icon: Target },
 ];
 
-const auth = createAuthClient();
+const auth = createAuthClient({
+  baseURL: process.env.NODE_ENV === "production" ? undefined : "http://localhost:3000",
+  fetchOptions: {
+    credentials: "include",
+  },
+});
 
 export const MainNav = () => {
   const pathname = usePathname();
   const [user, setUser] = useState<{ name?: string | null; email?: string | null; image?: string | null } | null>(null);
-  const post = (action: string, fields: Record<string, string>) => {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = action;
-    Object.entries(fields).forEach(([key, value]) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = value;
-      form.appendChild(input);
-    });
-    document.body.appendChild(form);
-    form.submit();
-  };
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
+  
+  // Test log to verify new code is running
+  logger.debug("MainNav component loaded with enhanced logging");
+  
+  const checkSession = useCallback(async () => {
+    try {
+      logger.debug("=== SESSION CHECK START ===");
+      logger.debug("Fetching user session");
+      logger.debug("Current cookies:", document.cookie);
+      logger.debug("Auth client:", auth);
+      // Avoid accessing private internals
+      // logger.debug("Auth client baseURL:", (auth as any).baseURL);
+      // logger.debug("Auth client fetch:", (auth as any).fetch);
+      
+      // Try to manually call the session endpoint to see what's happening
       try {
-        const res = await (auth as any).getSession();
-        if (!cancelled) setUser(res?.data?.user ?? null);
-      } catch {
-        if (!cancelled) setUser(null);
+        logger.debug("Making manual session request with credentials: include");
+        const manualResponse = await fetch("/api/auth/get-session", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        logger.debug("Manual session fetch status:", manualResponse.status);
+        logger.debug("Manual session fetch headers:", Object.fromEntries(manualResponse.headers.entries()));
+        const manualData = (await manualResponse.json()) as unknown;
+        logger.debug("Manual session response:", manualData);
+        logger.debug("Cookies after manual request:", document.cookie);
+      } catch (manualError) {
+        logger.error("Manual session fetch failed:", manualError);
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+      
+      const res = await auth.getSession();
+      logger.debug("Raw session response:", res);
+      logger.debug("Session data:", res?.data);
+      logger.debug("Session user:", res?.data?.user);
+      
+      setUser(res?.data?.user ?? null);
+      logger.debug("User session:", res?.data?.user ? "authenticated" : "not authenticated");
+      logger.debug("=== SESSION CHECK END ===");
+    } catch (error) {
+      logger.error("Failed to fetch user session:", error);
+      logger.error("Error details:", error);
+      setUser(null);
+    }
   }, []);
+  
+  const handleGoogleSignIn = useCallback(async () => {
+    logger.debug("=== GOOGLE SIGN-IN START ===");
+    logger.debug("Attempting Google sign-in");
+    logger.debug("Cookies before sign-in:", document.cookie);
+    
+    try {
+      const signInResult = await auth.signIn.social({ provider: "google" });
+      logger.info("Google sign-in initiated successfully");
+      logger.debug("Sign-in result:", signInResult);
+      logger.debug("=== GOOGLE SIGN-IN END ===");
+      
+      // Re-check session after successful sign-in with multiple attempts
+      setTimeout(() => {
+        logger.debug("=== POST-SIGN-IN CHECK 1 (1s) ===");
+        logger.debug("Cookies after 1s:", document.cookie);
+        void checkSession();
+      }, 1000);
+      
+      setTimeout(() => {
+        logger.debug("=== POST-SIGN-IN CHECK 2 (3s) ===");
+        logger.debug("Cookies after 3s:", document.cookie);
+        void checkSession();
+      }, 3000);
+      
+      setTimeout(() => {
+        logger.debug("=== POST-SIGN-IN CHECK 3 (5s) ===");
+        logger.debug("Cookies after 5s:", document.cookie);
+        void checkSession();
+      }, 5000);
+    } catch (error) {
+      logger.error("Google sign-in failed:", error);
+    }
+  }, [checkSession]);
+  
+  useEffect(() => {
+    void checkSession();
+  }, [checkSession]);
 
   return (
     <div className="w-0 flex-none md:w-64">
@@ -106,7 +169,7 @@ export const MainNav = () => {
               <Button
                 variant="outline"
                 className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
-                onClick={() => void (auth as any).signIn?.social?.({ provider: "google" })}
+                onClick={handleGoogleSignIn}
               >
                 Sign in
               </Button>
@@ -212,7 +275,7 @@ export const MainNav = () => {
                 variant="outline"
                 size="sm"
                 className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
-                onClick={() => void (auth as any).signIn?.social?.({ provider: "google" })}
+                onClick={handleGoogleSignIn}
               >
                 Sign in
               </Button>

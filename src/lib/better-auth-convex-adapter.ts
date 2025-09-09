@@ -9,7 +9,6 @@ export function convexAdapter() {
   const adapter: CreateCustomAdapter = ({ getFieldName }) => {
     const log = (...args: unknown[]) => {
       try {
-        // eslint-disable-next-line no-console
         console.log("[ConvexAdapter]", ...args);
       } catch {}
     };
@@ -62,19 +61,34 @@ export function convexAdapter() {
             await convex.mutation(api.auth.createAccount, payload);
             return payload as unknown as Record<string, unknown>;
           }
-          case "session": {
-            const payload = {
-              id: String(data.id),
-              userId: String(data.userId),
-              expiresAt: toEpoch(data.expiresAt),
-              createdAt: toEpoch(data.createdAt),
-              updatedAt: toEpoch(data.updatedAt),
-              ipAddress: typeof data.ipAddress === "string" ? data.ipAddress : undefined,
-              userAgent: typeof data.userAgent === "string" ? data.userAgent : undefined,
-            } satisfies Parameters<typeof convex.mutation<typeof api.auth.createSession>>[1];
-            await convex.mutation(api.auth.createSession, payload);
-            return payload as unknown as Record<string, unknown>;
-          }
+      case "session": {
+        const tokenFromData = typeof (data as { token?: unknown }).token === "string" ? (data as { token?: string }).token : undefined;
+        const payload = {
+          // Store the session token as the DB id (schema comment indicates id is session token)
+          id: tokenFromData ?? String(data.id),
+          userId: String(data.userId),
+          expiresAt: toEpoch(data.expiresAt),
+          createdAt: toEpoch(data.createdAt),
+          updatedAt: toEpoch(data.updatedAt),
+          ipAddress: typeof data.ipAddress === "string" ? data.ipAddress : undefined,
+          userAgent: typeof data.userAgent === "string" ? data.userAgent : undefined,
+        } satisfies Parameters<typeof convex.mutation<typeof api.auth.createSession>>[1];
+        log("create.session", payload);
+        await convex.mutation(api.auth.createSession, payload);
+        
+        const result = {
+          id: String(payload.id),
+          userId: String(payload.userId),
+          token: tokenFromData ?? String(payload.id),
+          expiresAt: new Date(payload.expiresAt),
+          createdAt: new Date(payload.createdAt),
+          updatedAt: new Date(payload.updatedAt),
+          ipAddress: payload.ipAddress,
+          userAgent: payload.userAgent,
+        };
+        log("create.session.returning", result);
+        return result as unknown as Record<string, unknown>;
+      }
           case "verification": {
             const payload = {
               id: String(data.id),
@@ -120,11 +134,57 @@ export function convexAdapter() {
             }
             return null;
           }
-          case "session": {
-            const byId = where?.find((w) => getFieldName({ model, field: w.field }) === "id");
-            if (byId) return await convex.query(api.auth.getSessionById, { id: String(byId.value) });
+      case "session": {
+        log("findOne.session.where", where);
+        // Support lookups by token (map to DB id) and by id
+        const byToken = where?.find((w) => w.field === "token");
+        if (byToken && typeof byToken.value === "string") {
+          log("findOne.session.byToken", byToken);
+          const token = String(byToken.value);
+          const row = await convex.query(api.auth.getSessionById, { id: token });
+          if (!row) {
+            log("findOne.session.NOT_FOUND_BY_TOKEN", token);
             return null;
           }
+          const formatted = {
+            ...row,
+            token: token,
+            expiresAt: new Date(row.expiresAt),
+            createdAt: new Date(row.createdAt),
+            updatedAt: new Date(row.updatedAt),
+          };
+          log("findOne.session.formatted", formatted);
+          return formatted;
+        }
+        const byId = where?.find((w) => getFieldName({ model, field: w.field }) === "id");
+        if (byId) {
+          log("findOne.session.byId", byId);
+          log("findOne.session.searchingFor", String(byId.value));
+          const result = await convex.query(api.auth.getSessionById, { id: String(byId.value) });
+          log("findOne.session.result", result);
+          log("findOne.session.result.type", typeof result);
+          log("findOne.session.result.keys", result ? Object.keys(result) : "null");
+          
+          if (!result) {
+            log("findOne.session.NOT_FOUND", "Session not found in database");
+          } else {
+            // Convert epoch timestamps back to Date objects for Better Auth and include token
+            const formattedResult = {
+              ...result,
+              token: result.id,
+              expiresAt: new Date(result.expiresAt),
+              createdAt: new Date(result.createdAt),
+              updatedAt: new Date(result.updatedAt),
+            };
+            log("findOne.session.formatted", formattedResult);
+            return formattedResult;
+          }
+          
+          return result;
+        }
+        log("findOne.session.NO_ID_FILTER", "No id filter provided");
+        return null;
+      }
           case "verification": {
             log("findOne.verification.where", where);
             const byId = where?.find((w) => getFieldName({ model, field: w.field }) === "id");
@@ -175,6 +235,12 @@ export function convexAdapter() {
       async findMany(ctx: { model: string; where?: Array<{ field: string; value: unknown; operator?: string }>; limit?: number; offset?: number }) {
         const { model, where, limit, offset } = ctx;
         log("findMany", { model, where, limit, offset });
+        
+        if (model === "session") {
+          log("findMany.session.CALLED", "Better Auth is looking for sessions with findMany");
+          log("findMany.session.where", where);
+        }
+        
         switch (model) {
           case "verification": {
             const byId = where?.find((w) => w.field === "id");
@@ -207,13 +273,28 @@ export function convexAdapter() {
             return [];
           }
           case "session": {
+            log("findMany.session.processing", "Processing session findMany request");
             const userId = where?.find((w) => getFieldName({ model, field: w.field }) === "userId");
             if (userId) {
+              log("findMany.session.byUserId", String(userId.value));
               const rows = await convex.query(api.auth.getSessionsByUserId, {
                 userId: String(userId.value),
               });
-              return rows.slice(offset ?? 0, (offset ?? 0) + (limit ?? rows.length));
+              log("findMany.session.found", rows.length);
+              const result = rows.slice(offset ?? 0, (offset ?? 0) + (limit ?? rows.length));
+              
+              // Convert epoch timestamps back to Date objects for Better Auth and include token
+              const formattedResult = result.map(row => ({
+                ...row,
+                token: row.id,
+                expiresAt: new Date(row.expiresAt),
+                createdAt: new Date(row.createdAt),
+                updatedAt: new Date(row.updatedAt),
+              }));
+              log("findMany.session.returning", formattedResult.length);
+              return formattedResult;
             }
+            log("findMany.session.noUserId", "No userId filter provided");
             return [];
           }
           default:

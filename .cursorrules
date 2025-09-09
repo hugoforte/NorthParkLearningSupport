@@ -1,5 +1,11 @@
 # Cursor Rules for NorthPark Learning Support
 
+## Package Manager
+- **ALWAYS** use `pnpm` for package management, never `npm` or `yarn`
+- Use `pnpm add` for installing dependencies
+- Use `pnpm remove` for removing dependencies
+- Use `pnpm run <script>` for running package scripts
+
 ## TypeScript Error Checking
 - **ONLY** run TypeScript checks when JavaScript/TypeScript files have been modified, added, or deleted
 - **ALWAYS** run `npx tsc --noEmit` before completing any task involving JS/TS changes
