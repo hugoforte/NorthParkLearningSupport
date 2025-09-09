@@ -1,0 +1,45 @@
+# Cursor Rules for NorthPark Learning Support
+
+## TypeScript Error Checking
+- **ONLY** run TypeScript checks when JavaScript/TypeScript files have been modified, added, or deleted
+- **ALWAYS** run `npx tsc --noEmit` before completing any task involving JS/TS changes
+- **ALWAYS** run `pnpm run build` to ensure the application builds successfully after JS/TS changes
+- **NEVER** hand back control if there are TypeScript compilation errors after JS/TS modifications
+- **NEVER** hand back control if the build fails after JS/TS modifications
+- Fix all TypeScript errors immediately before responding to the user when JS/TS files are involved
+
+## Code Quality Standards
+- Use `??` (nullish coalescing) instead of `||` for safer null/undefined handling
+- Use optional chaining (`?.`) when accessing potentially undefined properties
+- Add `void` operator for floating promises in useEffect
+- Prefix unused parameters with `_` to avoid ESLint warnings
+- Avoid `any` types - use proper TypeScript types instead
+
+## Environment Variables
+- Always use the existing `env.js` pattern for environment variable access
+- Import from `@/env.js` or `../env.js` as appropriate
+- Never use direct `process.env` access in application code
+
+## Build Process
+- Ensure `npx convex dev` is running when working with Convex functions
+- Run `npx convex dev --once` to generate types if needed
+- Always verify the build works with `pnpm run build` before completion
+
+## Error Handling
+- Fix all ESLint errors before completion
+- Fix all TypeScript errors before completion
+- Fix all build errors before completion
+- Provide clear error messages and solutions
+
+## Task Completion Checklist
+**When JavaScript/TypeScript files have been modified, added, or deleted:**
+- [ ] `npx tsc --noEmit` passes without errors
+- [ ] `pnpm run build` completes successfully
+- [ ] All ESLint errors are resolved
+- [ ] All TypeScript errors are resolved
+- [ ] Environment variables are properly configured
+- [ ] Convex functions are properly typed and working
+
+**For non-JS/TS changes (documentation, config, etc.):**
+- [ ] Verify the change is complete and correct
+- [ ] No TypeScript checks required unless JS/TS files were touched
