@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as auth from "../auth.js";
 import type * as classAssignments from "../classAssignments.js";
 import type * as classes from "../classes.js";
 import type * as goals from "../goals.js";
@@ -32,6 +33,7 @@ import type * as teachers from "../teachers.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   classAssignments: typeof classAssignments;
   classes: typeof classes;
   goals: typeof goals;

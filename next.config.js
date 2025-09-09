@@ -5,6 +5,9 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+	// Avoid Windows EPERM on locked .next by using custom distDir
+	distDir: ".next-build",
+};
 
 export default config;

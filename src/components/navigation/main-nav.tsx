@@ -14,6 +14,9 @@ import {
   Target,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { createAuthClient } from "better-auth/client";
+import { useEffect, useState } from "react";
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
@@ -24,8 +27,39 @@ const navigation = [
   { name: "Goals", href: "/goals", icon: Target },
 ];
 
+const auth = createAuthClient();
+
 export const MainNav = () => {
   const pathname = usePathname();
+  const [user, setUser] = useState<{ name?: string | null; email?: string | null; image?: string | null } | null>(null);
+  const post = (action: string, fields: Record<string, string>) => {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = action;
+    Object.entries(fields).forEach(([key, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+  };
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await (auth as any).getSession();
+        if (!cancelled) setUser(res?.data?.user ?? null);
+      } catch {
+        if (!cancelled) setUser(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="w-0 flex-none md:w-64">
@@ -36,6 +70,48 @@ export const MainNav = () => {
             <GraduationCap className="h-6 w-6 text-blue-400" />
             <span className="font-semibold text-white">NorthPark</span>
           </Link>
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                {user.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.image}
+                    alt={user.name ?? user.email ?? "User"}
+                    className="h-7 w-7 rounded-full border border-gray-700"
+                  />
+                ) : (
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-xs text-gray-300">
+                    {(user.name ?? user.email ?? "U").slice(0, 1)}
+                  </div>
+                )}
+                <span className="hidden text-sm text-gray-300 sm:inline">
+                  {user.name ?? user.email ?? "Signed in"}
+                </span>
+                <Button
+                  variant="outline"
+                  className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                  onClick={async () => {
+                    try {
+                      await fetch("/api/auth/sign-out", { method: "POST" });
+                    } finally {
+                      window.location.reload();
+                    }
+                  }}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                onClick={() => void (auth as any).signIn?.social?.({ provider: "google" })}
+              >
+                Sign in
+              </Button>
+            )}
+          </div>
           <Sheet>
             <SheetTrigger className="rounded-md p-2 text-gray-300 hover:bg-gray-800 hover:text-white">
               <Menu className="h-5 w-5" />
@@ -89,6 +165,59 @@ export const MainNav = () => {
               <p className="text-sm text-gray-400">Learning Support</p>
             </div>
           </Link>
+          <div className="mb-6 flex items-center justify-between">
+            {user ? (
+              <div className="flex items-center gap-3">
+                {user.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.image}
+                    alt={user.name ?? user.email ?? "User"}
+                    className="h-8 w-8 rounded-full border border-gray-700"
+                  />
+                ) : (
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-sm text-gray-300">
+                    {(user.name ?? user.email ?? "U").slice(0, 1)}
+                  </div>
+                )}
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-white">
+                    {user.name ?? user.email ?? "Signed in"}
+                  </span>
+                  {user.email ? (
+                    <span className="text-xs text-gray-400">{user.email}</span>
+                  ) : null}
+                </div>
+              </div>
+            ) : (
+              <span className="text-sm text-gray-400">Not signed in</span>
+            )}
+            {user ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                onClick={async () => {
+                  try {
+                    await fetch("/api/auth/sign-out", { method: "POST" });
+                  } finally {
+                    window.location.reload();
+                  }
+                }}
+              >
+                Sign out
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                onClick={() => void (auth as any).signIn?.social?.({ provider: "google" })}
+              >
+                Sign in
+              </Button>
+            )}
+          </div>
           <nav className="space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon;

@@ -122,3 +122,6 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# Custom Next.js build directory
+/.next-build/

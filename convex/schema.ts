@@ -101,4 +101,61 @@ export default defineSchema({
     .index("by_author", ["authorId"])
     .index("by_completed", ["isCompleted"])
     .index("by_status", ["status"]),
+
+  // Better Auth storage: Users
+  authUsers: defineTable({
+    id: v.string(),
+    email: v.string(),
+    name: v.string(),
+    image: v.optional(v.string()),
+    emailVerified: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user_id", ["id"]) // unique logical id used by Better Auth
+    .index("by_email", ["email"]),
+
+  // Better Auth storage: Accounts
+  authAccounts: defineTable({
+    id: v.string(),
+    userId: v.string(), // references authUsers.id
+    providerId: v.string(),
+    accountId: v.string(),
+    accessToken: v.optional(v.string()),
+    refreshToken: v.optional(v.string()),
+    idToken: v.optional(v.string()),
+    scope: v.optional(v.string()),
+    accessTokenExpiresAt: v.optional(v.number()),
+    refreshTokenExpiresAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_account_id", ["id"]) // unique logical id used by Better Auth
+    .index("by_user", ["userId"]) // for listing by user
+    .index("by_provider_account", ["providerId", "accountId"]),
+
+  // Better Auth storage: Sessions
+  authSessions: defineTable({
+    id: v.string(), // session token
+    userId: v.string(),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    ipAddress: v.optional(v.string()),
+    userAgent: v.optional(v.string()),
+  })
+    .index("by_session_id", ["id"]) // lookup by token
+    .index("by_user", ["userId"]),
+
+  // Better Auth storage: Verifications (email / magic link)
+  authVerifications: defineTable({
+    id: v.string(),
+    identifier: v.string(),
+    value: v.string(),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_verification_id", ["id"])
+    .index("by_identifier_value", ["identifier", "value"]),
 });

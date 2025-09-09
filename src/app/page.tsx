@@ -13,9 +13,16 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { createAuthClient } from "better-auth/client";
+import { useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 
+const authClient = createAuthClient();
+
 export default function HomePage() {
+  const handleGoogle = useCallback(async () => {
+    await authClient.signIn.social({ provider: "google" });
+  }, []);
   const features = [
     {
       title: "Teachers",
@@ -212,6 +219,9 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex space-x-3">
+            <Button onClick={handleGoogle} className="bg-red-600 text-white hover:bg-red-700">
+              Sign in with Google
+            </Button>
             <Link href="/teachers/add">
               <Button className="bg-blue-600 text-white hover:bg-blue-700">
                 <Users className="mr-2 h-4 w-4" />

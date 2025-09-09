@@ -109,3 +109,22 @@ export const populateSubjects = mutation({
     return results;
   },
 });
+
+// Migration helper to warm up indexes for auth tables
+export const warmupAuthIndexes = mutation({
+  args: {},
+  handler: async (ctx) => {
+    await ctx.db.query("authUsers").withIndex("by_email", (q) => q).collect();
+    await ctx.db
+      .query("authAccounts")
+      .withIndex("by_provider_account", (q) => q)
+      .collect();
+    await ctx.db.query("authSessions").withIndex("by_user", (q) => q).collect();
+    await ctx
+      .db
+      .query("authVerifications")
+      .withIndex("by_identifier_value", (q) => q)
+      .collect();
+    return "ok";
+  },
+});
