@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { MainNav } from "@/components/navigation/main-nav";
 import { ConvexProviderWrapper } from "@/components/providers/convex-provider";
+import { AuthProvider } from "@/components/auth/auth-context";
 
 export const metadata: Metadata = {
   title: "NorthPark Learning Support",
@@ -23,12 +24,14 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable} dark`}>
       <body className="min-h-screen bg-gray-950 text-white">
         <ConvexProviderWrapper>
-          <div className="flex min-h-screen">
-            <MainNav />
-            <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-20 md:px-8 md:py-10">
-              {children}
-            </main>
-          </div>
+          <AuthProvider>
+            <div className="flex min-h-screen">
+              <MainNav />
+              <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-20 md:px-8 md:py-10">
+                {children}
+              </main>
+            </div>
+          </AuthProvider>
         </ConvexProviderWrapper>
       </body>
     </html>

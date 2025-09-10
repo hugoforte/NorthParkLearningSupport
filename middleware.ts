@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow the main page without auth
-  if (pathname === "/") {
+  // Allow the main page and login page without auth
+  if (pathname === "/" || pathname === "/login") {
     return NextResponse.next();
   }
 
   // Check session via Better Auth endpoint
-  const sessionRes = await fetch(new URL("/api/auth/get-session", request.url), {
+  const sessionRes = await fetch(new URL("/api/auth/session", request.url), {
     method: "GET",
     headers: {
       cookie: request.headers.get("cookie") ?? "",
@@ -17,7 +17,11 @@ export async function middleware(request: NextRequest) {
   });
 
   if (sessionRes.ok) {
-    return NextResponse.next();
+    const sessionData = await sessionRes.json();
+    // Check if we have a valid session with user data
+    if (sessionData?.user) {
+      return NextResponse.next();
+    }
   }
 
   // Not authenticated: redirect to main page
