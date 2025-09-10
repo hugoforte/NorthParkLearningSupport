@@ -97,9 +97,26 @@ export const create = mutation({
     ),
     content: v.string(),
     isPrivate: v.boolean(),
+    currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("notes", args);
+    // Validate that the currentUserId exists in authUsers
+    const authUser = await ctx.db
+      .query("authUsers")
+      .filter((q) => q.eq(q.field("id"), args.currentUserId))
+      .first();
+    
+    if (!authUser) {
+      throw new Error("Invalid user - authentication required");
+    }
+
+    // Remove currentUserId from args and add backend-determined createdBy
+    const { currentUserId, ...noteData } = args;
+    
+    return await ctx.db.insert("notes", {
+      ...noteData,
+      createdBy: currentUserId, // Set createdBy to the validated user ID
+    });
   },
 });
 

@@ -22,6 +22,7 @@ interface TeacherCardProps {
     _id: Id<"teachers">;
     firstName: string;
     lastName: string;
+    email?: string;
     isActive: boolean;
     _creationTime: number;
   };
@@ -70,7 +71,10 @@ export const TeacherCard = ({ teacher }: TeacherCardProps) => {
           </div>
           <div>
             <CardTitle className="text-lg text-white">{fullName}</CardTitle>
-            <p className="text-sm text-gray-400">Teacher</p>
+            {teacher.email && (
+              <p className="text-sm text-gray-400">{teacher.email}</p>
+            )}
+            <p className="text-xs text-gray-500">Teacher</p>
           </div>
         </div>
       </CardHeader>

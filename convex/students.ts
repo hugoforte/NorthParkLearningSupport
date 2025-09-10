@@ -72,10 +72,25 @@ export const create = mutation({
     classId: v.id("classes"),
     studentId: v.optional(v.string()),
     dateOfBirth: v.optional(v.number()),
+    currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
   },
   handler: async (ctx, args) => {
+    // Validate that the currentUserId exists in authUsers
+    const authUser = await ctx.db
+      .query("authUsers")
+      .filter((q) => q.eq(q.field("id"), args.currentUserId))
+      .first();
+    
+    if (!authUser) {
+      throw new Error("Invalid user - authentication required");
+    }
+
+    // Remove currentUserId from args and add backend-determined createdBy
+    const { currentUserId, ...studentData } = args;
+    
     return await ctx.db.insert("students", {
-      ...args,
+      ...studentData,
+      createdBy: currentUserId, // Set createdBy to the validated user ID
       isActive: true,
     });
   },

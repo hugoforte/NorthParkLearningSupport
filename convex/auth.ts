@@ -35,7 +35,40 @@ export const createUser = mutation({
     updatedAt: v.number(),
   },
   handler: async (ctx, args) => {
+    // Create the auth user
     await ctx.db.insert("authUsers", args);
+    
+    // Check if a teacher with this email already exists
+    const existingTeacher = await ctx.db
+      .query("teachers")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+    
+    if (!existingTeacher) {
+      // Parse the name into first and last name
+      const nameParts = args.name.trim().split(/\s+/);
+      const firstName = nameParts[0] || "Unknown";
+      const lastName = nameParts.slice(1).join(" ") || "User";
+      
+      // Create a corresponding teacher record
+      try {
+        await ctx.db.insert("teachers", {
+          firstName,
+          lastName,
+          email: args.email,
+          authUserId: args.id, // Link this teacher to the auth user
+          isActive: true,
+          createdBy: args.email, // Use email as the creator ID
+        });
+        console.log(`Created teacher record for user: ${args.name} (${args.email})`);
+      } catch (error) {
+        console.error("Failed to create teacher record:", error);
+        // Don't fail the user creation if teacher creation fails
+      }
+    } else {
+      console.log(`User ${args.name} (${args.email}) associated with existing teacher: ${existingTeacher.firstName} ${existingTeacher.lastName}`);
+    }
+    
     return args;
   },
 });
@@ -295,5 +328,6 @@ export const deleteAccount = mutation({
     return undefined;
   },
 });
+
 
 

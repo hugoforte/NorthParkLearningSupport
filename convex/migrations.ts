@@ -30,6 +30,7 @@ export const populateGrades = mutation({
         const id = await ctx.db.insert("grades", {
           ...grade,
           isActive: true,
+          createdBy: "system", // Default for migration
         });
         results.push({ action: "created", id, grade: grade.name });
       } else {
@@ -95,6 +96,7 @@ export const populateSubjects = mutation({
         const id = await ctx.db.insert("subjects", {
           ...subject,
           isActive: true,
+          createdBy: "system", // Default for migration
         });
         results.push({ action: "created", id, subject: subject.name });
       } else {
@@ -126,5 +128,55 @@ export const warmupAuthIndexes = mutation({
       .withIndex("by_identifier_value", (q) => q)
       .collect();
     return "ok";
+  },
+});
+
+// Update existing teacher records to link them with auth users based on email
+export const linkTeachersWithAuthUsers = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const teachers = await ctx.db.query("teachers").collect();
+    const authUsers = await ctx.db.query("authUsers").collect();
+    const results = [];
+    
+    for (const teacher of teachers) {
+      if (teacher.authUserId) {
+        results.push({ teacherId: teacher._id, status: "already_linked", authUserId: teacher.authUserId });
+        continue;
+      }
+      
+      if (teacher.email) {
+        // Find matching auth user by email
+        const matchingAuthUser = authUsers.find(user => user.email === teacher.email);
+        
+        if (matchingAuthUser) {
+          await ctx.db.patch(teacher._id, { authUserId: matchingAuthUser.id });
+          console.log(`Linked teacher ${teacher.firstName} ${teacher.lastName} (${teacher.email}) with auth user ${matchingAuthUser.id}`);
+          results.push({ 
+            teacherId: teacher._id, 
+            status: "linked", 
+            authUserId: matchingAuthUser.id,
+            teacherName: `${teacher.firstName} ${teacher.lastName}`,
+            email: teacher.email
+          });
+        } else {
+          console.log(`No auth user found for teacher ${teacher.firstName} ${teacher.lastName} (${teacher.email})`);
+          results.push({ 
+            teacherId: teacher._id, 
+            status: "no_auth_user_found",
+            teacherName: `${teacher.firstName} ${teacher.lastName}`,
+            email: teacher.email
+          });
+        }
+      } else {
+        results.push({ 
+          teacherId: teacher._id, 
+          status: "no_email",
+          teacherName: `${teacher.firstName} ${teacher.lastName}`
+        });
+      }
+    }
+    
+    return results;
   },
 });

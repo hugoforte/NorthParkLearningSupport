@@ -113,12 +113,27 @@ export const create = mutation({
       ),
     ),
     targetDate: v.optional(v.number()),
+    currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
   },
   handler: async (ctx, args) => {
+    // Validate that the currentUserId exists in authUsers
+    const authUser = await ctx.db
+      .query("authUsers")
+      .filter((q) => q.eq(q.field("id"), args.currentUserId))
+      .first();
+    
+    if (!authUser) {
+      throw new Error("Invalid user - authentication required");
+    }
+
+    // Remove currentUserId from args and add backend-determined createdBy
+    const { currentUserId, ...goalData } = args;
+    
     return await ctx.db.insert("goals", {
-      ...args,
+      ...goalData,
+      createdBy: currentUserId, // Set createdBy to the validated user ID
       isCompleted: false,
-      status: args.status ?? "NOT_STARTED",
+      status: goalData.status ?? "NOT_STARTED",
     });
   },
 });

@@ -47,6 +47,7 @@ export const create = mutation({
     name: v.string(),
     level: v.number(),
     description: v.optional(v.string()),
+    createdBy: v.string(), // authUsers.id
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("grades", {
