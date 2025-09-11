@@ -1,15 +1,18 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
-  // Legacy teachers table (keeping for backward compatibility)
+  ...authTables,
+
+  // Teachers table - can be linked to authenticated users or created as invites
   teachers: defineTable({
     firstName: v.string(),
     lastName: v.string(),
-    email: v.optional(v.string()), // Email from auth user - must be unique
-    authUserId: v.optional(v.string()), // ID of the authUser this teacher represents (if any)
+    email: v.optional(v.string()), // Email for linking with authenticated users
+    authUserId: v.optional(v.string()), // ID from authAccounts table (linked when teacher logs in)
     isActive: v.boolean(),
-    createdBy: v.string(), // authUsers.id (who created this record)
+    createdBy: v.string(), // ID from authAccounts table (who created this record)
   })
     .index("by_active", ["isActive"])
     .index("by_name", ["lastName", "firstName"])
@@ -23,7 +26,7 @@ export default defineSchema({
     level: v.number(),
     description: v.optional(v.string()),
     isActive: v.boolean(),
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_level", ["level"])
     .index("by_active", ["isActive"])
@@ -35,7 +38,7 @@ export default defineSchema({
     gradeId: v.id("grades"),
     description: v.optional(v.string()),
     isActive: v.boolean(),
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_grade", ["gradeId"])
     .index("by_active", ["isActive"])
@@ -46,7 +49,7 @@ export default defineSchema({
     teacherId: v.id("teachers"),
     classId: v.id("classes"),
     role: v.string(), // 'teacher' | 'assistant'
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_teacher", ["teacherId"])
     .index("by_class", ["classId"])
@@ -61,7 +64,7 @@ export default defineSchema({
     studentId: v.optional(v.string()),
     dateOfBirth: v.optional(v.number()),
     isActive: v.boolean(),
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_class", ["classId"])
     .index("by_active", ["isActive"])
@@ -81,7 +84,7 @@ export default defineSchema({
     ),
     content: v.string(),
     isPrivate: v.boolean(),
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_student", ["studentId"])
     .index("by_author", ["authorId"])
@@ -93,7 +96,7 @@ export default defineSchema({
     name: v.string(),
     description: v.optional(v.string()),
     isActive: v.boolean(),
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_name", ["name"])
     .index("by_active", ["isActive"])
@@ -114,7 +117,7 @@ export default defineSchema({
       v.literal("CANCELLED"),
     ),
     targetDate: v.optional(v.number()),
-    createdBy: v.string(), // authUsers.id
+    createdBy: v.string(), // ID from authAccounts table
   })
     .index("by_student", ["studentId"])
     .index("by_author", ["authorId"])
@@ -122,60 +125,4 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_created_by", ["createdBy"]),
 
-  // Better Auth storage: Users
-  authUsers: defineTable({
-    id: v.string(),
-    email: v.string(),
-    name: v.string(),
-    image: v.optional(v.string()),
-    emailVerified: v.boolean(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_user_id", ["id"]) // unique logical id used by Better Auth
-    .index("by_email", ["email"]),
-
-  // Better Auth storage: Accounts
-  authAccounts: defineTable({
-    id: v.string(),
-    userId: v.string(), // references authUsers.id
-    providerId: v.string(),
-    accountId: v.string(),
-    accessToken: v.optional(v.string()),
-    refreshToken: v.optional(v.string()),
-    idToken: v.optional(v.string()),
-    scope: v.optional(v.string()),
-    accessTokenExpiresAt: v.optional(v.number()),
-    refreshTokenExpiresAt: v.optional(v.number()),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_account_id", ["id"]) // unique logical id used by Better Auth
-    .index("by_user", ["userId"]) // for listing by user
-    .index("by_provider_account", ["providerId", "accountId"]),
-
-  // Better Auth storage: Sessions
-  authSessions: defineTable({
-    id: v.string(), // session token
-    userId: v.string(),
-    expiresAt: v.number(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-    ipAddress: v.optional(v.string()),
-    userAgent: v.optional(v.string()),
-  })
-    .index("by_session_id", ["id"]) // lookup by token
-    .index("by_user", ["userId"]),
-
-  // Better Auth storage: Verifications (email / magic link)
-  authVerifications: defineTable({
-    id: v.string(),
-    identifier: v.string(),
-    value: v.string(),
-    expiresAt: v.number(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_verification_id", ["id"])
-    .index("by_identifier_value", ["identifier", "value"]),
 });

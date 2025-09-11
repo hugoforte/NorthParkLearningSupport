@@ -18,6 +18,7 @@ import type * as classAssignments from "../classAssignments.js";
 import type * as classes from "../classes.js";
 import type * as goals from "../goals.js";
 import type * as grades from "../grades.js";
+import type * as http from "../http.js";
 import type * as migrations from "../migrations.js";
 import type * as notes from "../notes.js";
 import type * as students from "../students.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   classes: typeof classes;
   goals: typeof goals;
   grades: typeof grades;
+  http: typeof http;
   migrations: typeof migrations;
   notes: typeof notes;
   students: typeof students;

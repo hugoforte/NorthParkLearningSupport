@@ -77,27 +77,12 @@ export const create = mutation({
     authUserId: v.optional(v.string()), // ID of the authUser this teacher represents
   },
   handler: async (ctx, args) => {
-    // For now, we'll determine the creator from the authUserId if provided
-    // In the future, this should be determined from the session/auth context
-    let createdBy: string;
-    
-    if (args.authUserId) {
-      // Verify the authUserId exists
-      const authUser = await ctx.db
-        .query("authUsers")
-        .filter((q) => q.eq(q.field("id"), args.authUserId))
-        .first();
-      
-      if (!authUser) {
-        throw new Error("Invalid auth user ID");
-      }
-      
-      createdBy = args.authUserId;
-    } else {
-      // For manually created teachers without authUserId, we need a way to identify the creator
-      // This is a temporary solution - ideally we'd get this from session context
-      throw new Error("Cannot determine creator - authentication context not available");
+    // Get the current authenticated user as the creator
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
     }
+    const createdBy = identity.subject;
 
     // Check for duplicate email if provided
     if (args.email) {
@@ -111,7 +96,8 @@ export const create = mutation({
       }
     }
 
-    // Check for duplicate authUserId if provided
+    // Only check for duplicate authUserId if one is provided
+    // This allows creating "invited" teachers without authUserId
     if (args.authUserId) {
       const existingTeacher = await ctx.db
         .query("teachers")
@@ -124,8 +110,11 @@ export const create = mutation({
     }
     
     return await ctx.db.insert("teachers", {
-      ...args,
-      createdBy, // Set createdBy to the authUser ID on the backend
+      firstName: args.firstName,
+      lastName: args.lastName,
+      email: args.email,
+      authUserId: args.authUserId, // Can be undefined for invited teachers
+      createdBy,
       isActive: true,
     });
   },

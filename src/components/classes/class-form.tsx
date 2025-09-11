@@ -68,7 +68,7 @@ export const ClassForm = ({
           name,
           gradeId: gradeId as Id<"grades">,
           description: description || undefined,
-          currentUserId: user.id, // Pass current user ID for backend validation
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

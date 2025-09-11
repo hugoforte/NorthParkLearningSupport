@@ -1,29 +1,24 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { createAuthClient } from "better-auth/client";
+import React, { createContext, useContext, useEffect } from "react";
+import { useAuthActions, useAuthToken } from "@convex-dev/auth/react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import logger from "@/lib/logger";
 
-const auth = createAuthClient({
-  baseURL: process.env.NODE_ENV === "production" ? undefined : "http://localhost:3000",
-  fetchOptions: {
-    credentials: "include",
-  },
-});
-
 interface User {
-  id: string;
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
+  _id: string;
+  name?: string;
+  email?: string;
+  image?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
+  signIn: () => void;
+  signOut: () => void;
   refreshSession: () => Promise<void>;
 }
 
@@ -38,62 +33,47 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { signIn, signOut } = useAuthActions();
+  const token = useAuthToken();
+  
+  // Query the current user from Convex Auth
+  const user = useQuery(api.auth.getCurrentUser);
+  const createOrLinkTeacher = useMutation(api.auth.createOrLinkTeacher);
+  
+  const isLoading = user === undefined;
+  const isAuthenticated = user !== null && user !== undefined;
 
-  const refreshSession = useCallback(async () => {
-    try {
-      logger.debug("AuthProvider: Refreshing session");
-      const session = await auth.getSession();
-      const userData = session?.data?.user ?? null;
-      
-      setUser(userData);
-      logger.debug("AuthProvider: Session refreshed", userData ? "authenticated" : "not authenticated");
-    } catch (error) {
-      logger.error("AuthProvider: Failed to refresh session:", error);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const signIn = useCallback(async () => {
-    try {
-      logger.debug("AuthProvider: Starting Google sign-in");
-      await auth.signIn.social({ provider: "google" });
-      
-      // Wait a bit for the session to be established, then refresh
-      setTimeout(() => {
-        void refreshSession();
-      }, 1500);
-    } catch (error) {
-      logger.error("AuthProvider: Sign-in failed:", error);
-    }
-  }, [refreshSession]);
-
-  const signOut = useCallback(async () => {
-    try {
-      logger.debug("AuthProvider: Signing out");
-      await auth.signOut();
-      setUser(null);
-    } catch (error) {
-      logger.error("AuthProvider: Sign-out failed:", error);
-      // Still clear user state even if API call fails
-      setUser(null);
-    }
-  }, []);
-
-  // Initial session check
+  // Create or link teacher when user is authenticated
   useEffect(() => {
-    void refreshSession();
-  }, [refreshSession]);
+    if (isAuthenticated && user) {
+      logger.debug("AuthProvider: User authenticated, creating/linking teacher");
+      void createOrLinkTeacher().catch((error) => {
+        logger.error("AuthProvider: Failed to create/link teacher:", error);
+      });
+    }
+  }, [isAuthenticated, user, createOrLinkTeacher]);
+
+  const handleSignIn = () => {
+    logger.debug("AuthProvider: Starting Google sign-in");
+    void signIn("google");
+  };
+
+  const handleSignOut = () => {
+    logger.debug("AuthProvider: Signing out");
+    void signOut();
+  };
+
+  const refreshSession = async () => {
+    // Convex Auth handles session refresh automatically
+    logger.debug("AuthProvider: Session refresh requested (handled automatically by Convex Auth)");
+  };
 
   const value: AuthContextType = {
-    user,
+    user: user ?? null,
     isLoading,
-    isAuthenticated: !!user,
-    signIn,
-    signOut,
+    isAuthenticated,
+    signIn: handleSignIn,
+    signOut: handleSignOut,
     refreshSession,
   };
 

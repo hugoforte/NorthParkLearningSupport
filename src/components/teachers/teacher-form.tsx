@@ -60,7 +60,7 @@ export const TeacherForm = ({
           firstName,
           lastName,
           email: email || undefined,
-          authUserId: user.id, // Associate this teacher with the current auth user
+          // Don't pass authUserId - this is for inviting teachers, not linking to current user
         });
       }
       onSuccess?.();

@@ -1,9 +1,10 @@
-- [x] Make it deploy (Vercel)
+- [x] Make it deploy (Ver
 - [x] Attach database to UI (fetch actual teachers)
 - [x] Add styling - make it more modern
 - [x] Add crud for all entities
-- [ ] Add Authentication (BetterAuth + Convex)
-- [ ] Add Profile Page where you can update your user (who is a teacher)
+- [x] Add Authentication (BetterAuth + Convex)
+- [x] Add Profile Page where you can update your user (who is a teacher)
+- [ ] Deploy
 - [ ] Add Analytics (Posthog)
 - [ ] Add Logging
 - [ ] Add UploadThing support

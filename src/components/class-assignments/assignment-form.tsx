@@ -63,7 +63,7 @@ export const AssignmentForm = ({
         teacherId: selectedTeacher as Id<"teachers">,
         classId,
         role,
-        currentUserId: user.id, // Pass current user ID for backend validation
+        currentUserId: user._id, // Pass current user ID for backend validation
       });
       onSuccess?.();
     } catch (err) {

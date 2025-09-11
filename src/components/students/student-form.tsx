@@ -84,7 +84,7 @@ export const StudentForm = ({
           classId: classId as Id<"classes">,
           studentId: studentId || undefined,
           dateOfBirth: dateOfBirthTimestamp,
-          currentUserId: user.id, // Pass current user ID for backend validation
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

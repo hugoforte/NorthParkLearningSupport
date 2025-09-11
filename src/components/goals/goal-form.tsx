@@ -117,7 +117,7 @@ export const GoalForm = ({
           note,
           status,
           targetDate: targetDateTimestamp,
-          currentUserId: user.id, // Pass current user ID for backend validation
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

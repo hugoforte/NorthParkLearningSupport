@@ -97,7 +97,7 @@ export const NoteForm = ({
             | "OTHER",
           content,
           isPrivate,
-          currentUserId: user.id, // Pass current user ID for backend validation
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

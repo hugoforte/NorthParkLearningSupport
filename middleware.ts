@@ -1,40 +1,31 @@
-import { NextRequest, NextResponse } from "next/server";
+import {
+  convexAuthNextjsMiddleware,
+  createRouteMatcher,
+  nextjsMiddlewareRedirect,
+} from "@convex-dev/auth/nextjs/server";
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const isSignInPage = createRouteMatcher(["/login"]);
+const isProtectedRoute = createRouteMatcher([
+  "/teachers(.*)",
+  "/classes(.*)", 
+  "/students(.*)",
+  "/notes(.*)",
+  "/goals(.*)"
+]);
 
-  // Allow the main page and login page without auth
-  if (pathname === "/" || pathname === "/login") {
-    return NextResponse.next();
+export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+  if (isSignInPage(request) && (await convexAuth.isAuthenticated())) {
+    return nextjsMiddlewareRedirect(request, "/");
   }
-
-  // Check session via Better Auth endpoint
-  const sessionRes = await fetch(new URL("/api/auth/session", request.url), {
-    method: "GET",
-    headers: {
-      cookie: request.headers.get("cookie") ?? "",
-    },
-  });
-
-  if (sessionRes.ok) {
-    const sessionData = await sessionRes.json();
-    // Check if we have a valid session with user data
-    if (sessionData?.user) {
-      return NextResponse.next();
-    }
+  if (isProtectedRoute(request) && !(await convexAuth.isAuthenticated())) {
+    return nextjsMiddlewareRedirect(request, "/login");
   }
-
-  // Not authenticated: redirect to main page
-  const url = new URL("/", request.url);
-  url.searchParams.set("redirect", pathname);
-  return NextResponse.redirect(url);
-}
+});
 
 export const config = {
-  matcher: [
-    // Protect everything except API routes, Next static/image, favicon, and assets
-    "/((?!api|_next/static|_next/image|favicon.ico|assets/).*)",
-  ],
+  // The following matcher runs middleware on all routes
+  // except static assets.
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
 
 
