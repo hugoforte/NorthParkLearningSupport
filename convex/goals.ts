@@ -31,9 +31,9 @@ export const getByStudent = query({
   },
 });
 
-// Get goals by author (teacher)
+// Get goals by author (user)
 export const getByAuthor = query({
-  args: { authorId: v.id("teachers") },
+  args: { authorId: v.id("teachers") }, // Will be changed to "users" in Phase 2
   handler: async (ctx, args) => {
     return await ctx.db
       .query("goals")
@@ -100,7 +100,7 @@ export const getByStatus = query({
 export const create = mutation({
   args: {
     studentId: v.id("students"),
-    authorId: v.id("teachers"),
+    authorId: v.id("teachers"), // Will be changed to "users" in Phase 2
     subjectIds: v.array(v.id("subjects")),
     note: v.string(),
     status: v.optional(

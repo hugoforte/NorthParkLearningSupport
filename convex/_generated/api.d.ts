@@ -24,6 +24,7 @@ import type * as notes from "../notes.js";
 import type * as students from "../students.js";
 import type * as subjects from "../subjects.js";
 import type * as teachers from "../teachers.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   students: typeof students;
   subjects: typeof subjects;
   teachers: typeof teachers;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

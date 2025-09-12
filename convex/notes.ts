@@ -31,9 +31,9 @@ export const getByStudent = query({
   },
 });
 
-// Get notes by author (teacher)
+// Get notes by author (user)
 export const getByAuthor = query({
-  args: { authorId: v.id("teachers") },
+  args: { authorId: v.id("teachers") }, // Will be changed to "users" in Phase 2
   handler: async (ctx, args) => {
     return await ctx.db
       .query("notes")
@@ -73,7 +73,7 @@ export const getPublic = query({
 
 // Get private notes by author
 export const getPrivateByAuthor = query({
-  args: { authorId: v.id("teachers") },
+  args: { authorId: v.id("teachers") }, // Will be changed to "users" in Phase 2
   handler: async (ctx, args) => {
     return await ctx.db
       .query("notes")
@@ -87,7 +87,7 @@ export const getPrivateByAuthor = query({
 export const create = mutation({
   args: {
     studentId: v.id("students"),
-    authorId: v.id("teachers"),
+    authorId: v.id("teachers"), // Will be changed to "users" in Phase 2
     category: v.union(
       v.literal("ACADEMIC"),
       v.literal("BEHAVIOR"),

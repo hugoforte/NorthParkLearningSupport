@@ -1,5 +1,5 @@
 import Google from "@auth/core/providers/google";
-import { convexAuth } from "@convex-dev/auth/server";
+import { convexAuth, getAuthUserId } from "@convex-dev/auth/server";
 import { query, mutation } from "./_generated/server";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
@@ -9,7 +9,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId === null) {
       return null;
     }
@@ -23,7 +23,7 @@ export const getCurrentUser = query({
 export const createOrLinkTeacher = mutation({
   args: {},
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (userId === null) {
       throw new Error("User must be authenticated");
     }

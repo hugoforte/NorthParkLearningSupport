@@ -44,16 +44,16 @@ export default defineSchema({
     .index("by_active", ["isActive"])
     .index("by_created_by", ["createdBy"]),
 
-  // Class Assignments (many-to-many: teachers to classes)
+  // Class Assignments (many-to-many: users to classes)
   classAssignments: defineTable({
-    teacherId: v.id("teachers"),
+    userId: v.id("teachers"), // Will be changed to "users" in Phase 2
     classId: v.id("classes"),
     role: v.string(), // 'teacher' | 'assistant'
     createdBy: v.string(), // ID from authAccounts table
   })
-    .index("by_teacher", ["teacherId"])
+    .index("by_user", ["userId"]) // Will be changed from "by_teacher" in Phase 2
     .index("by_class", ["classId"])
-    .index("by_teacher_class", ["teacherId", "classId"])
+    .index("by_user_class", ["userId", "classId"]) // Will be changed from "by_teacher_class" in Phase 2
     .index("by_created_by", ["createdBy"]),
 
   // Students (belong to classes)
@@ -71,10 +71,10 @@ export default defineSchema({
     .index("by_name", ["lastName", "firstName"])
     .index("by_created_by", ["createdBy"]),
 
-  // Notes (created by teachers about students)
+  // Notes (created by users about students)
   notes: defineTable({
     studentId: v.id("students"),
-    authorId: v.id("teachers"),
+    authorId: v.id("teachers"), // Will be changed to "users" in Phase 2
     category: v.union(
       v.literal("ACADEMIC"),
       v.literal("BEHAVIOR"),
@@ -102,10 +102,10 @@ export default defineSchema({
     .index("by_active", ["isActive"])
     .index("by_created_by", ["createdBy"]),
 
-  // Goals (created by teachers for students)
+  // Goals (created by users for students)
   goals: defineTable({
     studentId: v.id("students"),
-    authorId: v.id("teachers"),
+    authorId: v.id("teachers"), // Will be changed to "users" in Phase 2
     subjectIds: v.array(v.id("subjects")),
     note: v.string(),
     isCompleted: v.boolean(),

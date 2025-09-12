@@ -8,13 +8,13 @@ export const getAll = query({
   },
 });
 
-// Get assignments by teacher
-export const getByTeacher = query({
-  args: { teacherId: v.id("teachers") },
+// Get assignments by user
+export const getByUser = query({
+  args: { userId: v.id("teachers") }, // Will be changed to "users" in Phase 2
   handler: async (ctx, args) => {
     return await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher", (q) => q.eq("teacherId", args.teacherId))
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
       .collect();
   },
 });
@@ -31,16 +31,16 @@ export const getByClass = query({
 });
 
 // Get specific assignment
-export const getByTeacherAndClass = query({
+export const getByUserAndClass = query({
   args: {
-    teacherId: v.id("teachers"),
+    userId: v.id("teachers"), // Will be changed to "users" in Phase 2
     classId: v.id("classes"),
   },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher_class", (q) =>
-        q.eq("teacherId", args.teacherId).eq("classId", args.classId),
+      .withIndex("by_user_class", (q) =>
+        q.eq("userId", args.userId).eq("classId", args.classId),
       )
       .first();
   },
@@ -49,7 +49,7 @@ export const getByTeacherAndClass = query({
 // Create class assignment
 export const create = mutation({
   args: {
-    teacherId: v.id("teachers"),
+    userId: v.id("teachers"), // Will be changed to "users" in Phase 2
     classId: v.id("classes"),
     role: v.string(), // 'teacher' | 'assistant'
     currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
@@ -65,13 +65,13 @@ export const create = mutation({
     // Check if assignment already exists
     const existing = await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher_class", (q) =>
-        q.eq("teacherId", args.teacherId).eq("classId", args.classId),
+      .withIndex("by_user_class", (q) =>
+        q.eq("userId", args.userId).eq("classId", args.classId),
       )
       .first();
 
     if (existing) {
-      throw new Error("Teacher is already assigned to this class");
+      throw new Error("User is already assigned to this class");
     }
 
     // Remove currentUserId from args and add backend-determined createdBy
@@ -115,17 +115,17 @@ export const remove = mutation({
   },
 });
 
-// Remove teacher from class (by teacher and class IDs)
-export const removeByTeacherAndClass = mutation({
+// Remove user from class (by user and class IDs)
+export const removeByUserAndClass = mutation({
   args: {
-    teacherId: v.id("teachers"),
+    userId: v.id("teachers"), // Will be changed to "users" in Phase 2
     classId: v.id("classes"),
   },
   handler: async (ctx, args) => {
     const assignment = await ctx.db
       .query("classAssignments")
-      .withIndex("by_teacher_class", (q) =>
-        q.eq("teacherId", args.teacherId).eq("classId", args.classId),
+      .withIndex("by_user_class", (q) =>
+        q.eq("userId", args.userId).eq("classId", args.classId),
       )
       .first();
 
