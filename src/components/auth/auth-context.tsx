@@ -34,7 +34,6 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { signIn, signOut } = useAuthActions();
-  const token = useAuthToken();
   
   // Query the current user from Convex Auth
   const user = useQuery(api.auth.getCurrentUser);

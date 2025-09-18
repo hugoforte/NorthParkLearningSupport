@@ -6,8 +6,8 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
-	// Avoid Windows EPERM on locked .next by using custom distDir
-	distDir: ".next-build",
+	// Use default .next directory for Vercel compatibility
+	// distDir: ".next-build", // Commented out for Vercel deployment
 };
 
 export default config;
