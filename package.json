@@ -6,7 +6,7 @@
   "description": "Learning support management system for NorthPark",
   "scripts": {
     "build": "next build",
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbo --port 3001",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
