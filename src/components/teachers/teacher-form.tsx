@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/components/auth/auth-context";
 
 interface TeacherFormProps {
   teacher?: {
     _id: Id<"teachers">;
     firstName: string;
     lastName: string;
+    email?: string;
     isActive: boolean;
   };
   onSuccess?: () => void;
@@ -26,8 +28,10 @@ export const TeacherForm = ({
 }: TeacherFormProps) => {
   const [firstName, setFirstName] = useState(teacher?.firstName ?? "");
   const [lastName, setLastName] = useState(teacher?.lastName ?? "");
+  const [email, setEmail] = useState(teacher?.email ?? "");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const createTeacher = useMutation(api.teachers.create);
   const updateTeacher = useMutation(api.teachers.update);
@@ -37,8 +41,15 @@ export const TeacherForm = ({
     setIsLoading(true);
     setError("");
 
+    if (!user?.email) {
+      setError("You must be logged in to create a teacher");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       if (teacher) {
+        // Don't send email when updating - it's read-only
         await updateTeacher({
           id: teacher._id,
           firstName,
@@ -48,6 +59,8 @@ export const TeacherForm = ({
         await createTeacher({
           firstName,
           lastName,
+          email: email || undefined,
+          // Don't pass authUserId - this is for inviting teachers, not linking to current user
         });
       }
       onSuccess?.();
@@ -73,36 +86,63 @@ export const TeacherForm = ({
             </Alert>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName" className="text-gray-300">
-                First Name
-              </Label>
-              <Input
-                id="firstName"
-                value={firstName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFirstName(e.target.value)
-                }
-                required
-                disabled={isLoading}
-                className="border-gray-600 bg-gray-700 text-white placeholder-gray-400"
-              />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName" className="text-gray-300">
+                  First Name
+                </Label>
+                <Input
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setFirstName(e.target.value)
+                  }
+                  required
+                  disabled={isLoading}
+                  className="border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName" className="text-gray-300">
+                  Last Name
+                </Label>
+                <Input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setLastName(e.target.value)
+                  }
+                  required
+                  disabled={isLoading}
+                  className="border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                />
+              </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName" className="text-gray-300">
-                Last Name
+              <Label htmlFor="email" className="text-gray-300">
+                Email {teacher && <span className="text-xs text-gray-500">(read-only)</span>}
               </Label>
               <Input
-                id="lastName"
-                value={lastName}
+                id="email"
+                type="email"
+                value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setLastName(e.target.value)
+                  setEmail(e.target.value)
                 }
-                required
-                disabled={isLoading}
-                className="border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                disabled={isLoading || !!teacher} // Disable email editing for existing teachers
+                placeholder="teacher@example.com"
+                className={`border-gray-600 text-white placeholder-gray-400 ${
+                  teacher 
+                    ? "bg-gray-600 cursor-not-allowed" // Read-only styling for existing teachers
+                    : "bg-gray-700"
+                }`}
               />
+              {!teacher && (
+                <p className="text-xs text-gray-500">
+                  Optional - leave blank if teacher will sign in with Google
+                </p>
+              )}
             </div>
           </div>
 

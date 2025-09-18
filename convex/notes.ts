@@ -97,9 +97,23 @@ export const create = mutation({
     ),
     content: v.string(),
     isPrivate: v.boolean(),
+    currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("notes", args);
+    // Validate authentication using Convex Auth
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+    const userId = identity.subject;
+
+    // Remove currentUserId from args and add backend-determined createdBy
+    const { currentUserId, ...noteData } = args;
+    
+    return await ctx.db.insert("notes", {
+      ...noteData,
+      createdBy: userId, // Set createdBy to the authenticated user ID
+    });
   },
 });
 

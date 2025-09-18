@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { useAuth } from "@/components/auth/auth-context";
 
 interface ClassFormProps {
   classItem?: {
@@ -37,6 +38,7 @@ export const ClassForm = ({
   const [description, setDescription] = useState(classItem?.description ?? "");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const createClass = useMutation(api.classes.create);
   const updateClass = useMutation(api.classes.update);
@@ -46,6 +48,12 @@ export const ClassForm = ({
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    if (!user?.email) {
+      setError("You must be logged in to create a class");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       if (classItem) {
@@ -60,6 +68,7 @@ export const ClassForm = ({
           name,
           gradeId: gradeId as Id<"grades">,
           description: description || undefined,
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

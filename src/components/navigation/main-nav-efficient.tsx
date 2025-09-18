@@ -17,11 +17,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/auth-context";
 
-const publicNavigation = [
+const navigation = [
   { name: "Home", href: "/", icon: Home },
-];
-
-const protectedNavigation = [
   { name: "Teachers", href: "/teachers", icon: Users },
   { name: "Classes", href: "/classes", icon: BookOpen },
   { name: "Students", href: "/students", icon: UserCheck },
@@ -31,12 +28,7 @@ const protectedNavigation = [
 
 export const MainNav = () => {
   const pathname = usePathname();
-  const { user, signIn, signOut, isAuthenticated } = useAuth();
-  
-  // Show only public routes when not authenticated, all routes when authenticated
-  const navigation = isAuthenticated 
-    ? [...publicNavigation, ...protectedNavigation]
-    : publicNavigation;
+  const { user, signIn, signOut } = useAuth();
 
   return (
     <div className="w-0 flex-none md:w-64">
@@ -140,8 +132,8 @@ export const MainNav = () => {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden h-screen w-full border-r border-gray-800 bg-gray-900 md:sticky md:top-0 md:block">
-        <div className="flex h-full flex-col p-6">
+      <div className="hidden min-h-screen w-full border-r border-gray-800 bg-gray-900 md:block">
+        <div className="p-6">
           <Link href="/" className="mb-8 flex items-center space-x-3">
             <GraduationCap className="h-8 w-8 text-blue-400" />
             <div>
@@ -198,7 +190,7 @@ export const MainNav = () => {
             )}
           </div>
 
-          <nav className="flex-1 space-y-2">
+          <nav className="space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (

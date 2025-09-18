@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { useAuth } from "@/components/auth/auth-context";
 
 interface NoteFormProps {
   note?: {
@@ -53,6 +54,7 @@ export const NoteForm = ({
   const [isPrivate, setIsPrivate] = useState(note?.isPrivate ?? false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const createNote = useMutation(api.notes.create);
   const updateNote = useMutation(api.notes.update);
@@ -63,6 +65,12 @@ export const NoteForm = ({
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    if (!user?.email) {
+      setError("You must be logged in to create a note");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       if (note) {
@@ -89,6 +97,7 @@ export const NoteForm = ({
             | "OTHER",
           content,
           isPrivate,
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

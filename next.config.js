@@ -5,6 +5,9 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+	// Use default .next directory for Vercel compatibility
+	// distDir: ".next-build", // Commented out for Vercel deployment
+};
 
 export default config;

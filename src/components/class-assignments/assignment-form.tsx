@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { useAuth } from "@/components/auth/auth-context";
 
 interface AssignmentFormProps {
   classId: Id<"classes">;
@@ -29,6 +30,7 @@ export const AssignmentForm = ({
   const [role, setRole] = useState<string>("teacher");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const createAssignment = useMutation(api.classAssignments.create);
   const teachers = useQuery(api.teachers.getActive);
@@ -50,11 +52,18 @@ export const AssignmentForm = ({
     setIsLoading(true);
     setError("");
 
+    if (!user?.email) {
+      setError("You must be logged in to create an assignment");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       await createAssignment({
         teacherId: selectedTeacher as Id<"teachers">,
         classId,
         role,
+        currentUserId: user._id, // Pass current user ID for backend validation
       });
       onSuccess?.();
     } catch (err) {

@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { useAuth } from "@/components/auth/auth-context";
 
 interface StudentFormProps {
   student?: {
@@ -45,6 +46,7 @@ export const StudentForm = ({
   );
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const createStudent = useMutation(api.students.create);
   const updateStudent = useMutation(api.students.update);
@@ -54,6 +56,12 @@ export const StudentForm = ({
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    if (!user?.email) {
+      setError("You must be logged in to create a student");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const dateOfBirthTimestamp = dateOfBirth
@@ -76,6 +84,7 @@ export const StudentForm = ({
           classId: classId as Id<"classes">,
           studentId: studentId || undefined,
           dateOfBirth: dateOfBirthTimestamp,
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

@@ -22,6 +22,7 @@ interface TeacherCardProps {
     _id: Id<"teachers">;
     firstName: string;
     lastName: string;
+    email?: string;
     isActive: boolean;
     _creationTime: number;
   };
@@ -62,15 +63,20 @@ export const TeacherCard = ({ teacher }: TeacherCardProps) => {
   };
 
   return (
-    <Card className="hover:bg-gray-750 border-gray-700 bg-gray-800 transition-colors">
+    <Card className="hover:bg-gray-750 border-gray-700 bg-gray-800 transition-colors overflow-hidden">
       <CardHeader>
-        <div className="flex items-center space-x-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
+        <div className="flex items-center space-x-3 overflow-hidden">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0">
             <User className="h-6 w-6 text-white" />
           </div>
-          <div>
-            <CardTitle className="text-lg text-white">{fullName}</CardTitle>
-            <p className="text-sm text-gray-400">Teacher</p>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <CardTitle className="text-lg text-white truncate">{fullName}</CardTitle>
+            {teacher.email && (
+              <p className="text-sm text-gray-400 truncate" title={teacher.email}>
+                {teacher.email.length > 30 ? `${teacher.email.substring(0, 30)}...` : teacher.email}
+              </p>
+            )}
+            <p className="text-xs text-gray-500">Teacher</p>
           </div>
         </div>
       </CardHeader>

@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { useAuth } from "@/components/auth/auth-context";
 
 interface GoalFormProps {
   goal?: {
@@ -68,6 +69,7 @@ export const GoalForm = ({
   );
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const createGoal = useMutation(api.goals.create);
   const updateGoal = useMutation(api.goals.update);
@@ -87,6 +89,12 @@ export const GoalForm = ({
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    if (!user?.email) {
+      setError("You must be logged in to create a goal");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const targetDateTimestamp = targetDate
@@ -109,6 +117,7 @@ export const GoalForm = ({
           note,
           status,
           targetDate: targetDateTimestamp,
+          currentUserId: user._id, // Pass current user ID for backend validation
         });
       }
       onSuccess?.();

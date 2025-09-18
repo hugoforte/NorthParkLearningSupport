@@ -46,15 +46,75 @@ export const getActive = query({
   },
 });
 
+// Get teacher by email
+export const getByEmail = query({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("teachers")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+  },
+});
+
+// Get teacher by auth user ID
+export const getByAuthUserId = query({
+  args: { authUserId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("teachers")
+      .withIndex("by_auth_user", (q) => q.eq("authUserId", args.authUserId))
+      .first();
+  },
+});
+
 // Create teacher
 export const create = mutation({
   args: {
     firstName: v.string(),
     lastName: v.string(),
+    email: v.optional(v.string()),
+    authUserId: v.optional(v.string()), // ID of the authUser this teacher represents
   },
   handler: async (ctx, args) => {
+    // Get the current authenticated user as the creator
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+    const createdBy = identity.subject;
+
+    // Check for duplicate email if provided
+    if (args.email) {
+      const existingTeacher = await ctx.db
+        .query("teachers")
+        .withIndex("by_email", (q) => q.eq("email", args.email))
+        .first();
+      
+      if (existingTeacher) {
+        throw new Error(`A teacher with email ${args.email} already exists`);
+      }
+    }
+
+    // Only check for duplicate authUserId if one is provided
+    // This allows creating "invited" teachers without authUserId
+    if (args.authUserId) {
+      const existingTeacher = await ctx.db
+        .query("teachers")
+        .withIndex("by_auth_user", (q) => q.eq("authUserId", args.authUserId))
+        .first();
+      
+      if (existingTeacher) {
+        throw new Error(`A teacher is already associated with this user account`);
+      }
+    }
+    
     return await ctx.db.insert("teachers", {
-      ...args,
+      firstName: args.firstName,
+      lastName: args.lastName,
+      email: args.email,
+      authUserId: args.authUserId, // Can be undefined for invited teachers
+      createdBy,
       isActive: true,
     });
   },
@@ -76,7 +136,11 @@ export const update = mutation({
       throw new Error("Teacher not found");
     }
 
-    return await ctx.db.patch(id, updates);
+    // Email is not allowed to be updated - it's tied to the auth user
+    // Remove email from updates if somehow passed in
+    const { email: _, ...safeUpdates } = updates as any;
+
+    return await ctx.db.patch(id, safeUpdates);
   },
 });
 

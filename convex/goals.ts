@@ -113,12 +113,24 @@ export const create = mutation({
       ),
     ),
     targetDate: v.optional(v.number()),
+    currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
   },
   handler: async (ctx, args) => {
+    // Validate authentication using Convex Auth
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+    const userId = identity.subject;
+
+    // Remove currentUserId from args and add backend-determined createdBy
+    const { currentUserId, ...goalData } = args;
+    
     return await ctx.db.insert("goals", {
-      ...args,
+      ...goalData,
+      createdBy: userId, // Set createdBy to the authenticated user ID
       isCompleted: false,
-      status: args.status ?? "NOT_STARTED",
+      status: goalData.status ?? "NOT_STARTED",
     });
   },
 });

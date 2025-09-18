@@ -52,8 +52,16 @@ export const create = mutation({
     teacherId: v.id("teachers"),
     classId: v.id("classes"),
     role: v.string(), // 'teacher' | 'assistant'
+    currentUserId: v.string(), // ID of the current authenticated user (validated on backend)
   },
   handler: async (ctx, args) => {
+    // Validate authentication using Convex Auth
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+    const userId = identity.subject;
+
     // Check if assignment already exists
     const existing = await ctx.db
       .query("classAssignments")
@@ -66,7 +74,13 @@ export const create = mutation({
       throw new Error("Teacher is already assigned to this class");
     }
 
-    return await ctx.db.insert("classAssignments", args);
+    // Remove currentUserId from args and add backend-determined createdBy
+    const { currentUserId, ...assignmentData } = args;
+    
+    return await ctx.db.insert("classAssignments", {
+      ...assignmentData,
+      createdBy: userId, // Set createdBy to the authenticated user ID
+    });
   },
 });
 
