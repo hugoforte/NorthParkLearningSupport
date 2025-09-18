@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect } from "react";
-import { useAuthActions, useAuthToken } from "@convex-dev/auth/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import logger from "@/lib/logger";
