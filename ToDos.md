@@ -1,15 +1,12 @@
-- [x] Make it deploy (Vercel)
-- [ ] Scaffold basic ui with mock data for listing teachers
-- [ ] Actually set up a database
-- [ ] Attach database to UI (fetch actual teachers)
-- [ ] Add Authentication (BetterAuth + Convex)
+- [x] Make it deploy (Ver
+- [x] Attach database to UI (fetch actual teachers)
+- [x] Add styling - make it more modern
+- [x] Add crud for all entities
+- [x] Add Authentication (BetterAuth + Convex)
+- [x] Add Profile Page where you can update your user (who is a teacher)
+- [ ] Deploy
 - [ ] Add Analytics (Posthog)
 - [ ] Add Logging
-- [ ] Add Profile Page where you can update your user (who is a teacher)
-- [ ] Add admin portal where you can set up users
-- [ ] Add "Add Class" functionality to admin
-- [ ] Add "Add Student" functionality to admin
-- [ ] Add Add Note functionality
-- [ ] Add Report - view all notes
-- [ ] Add Report - view all notes filters (By Teacher, Student, Class, Grade)
-
+- [ ] Add UploadThing support
+- [ ] Create migration - add image to teacher
+- [ ] Add ability to upload an image for the teacher

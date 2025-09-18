@@ -10,10 +10,6 @@
 /coverage
 *.lcov
 
-# Convex
-/convex/_generated
-.convex/
-
 # next.js
 /.next/
 /out/
@@ -126,3 +122,6 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# Custom Next.js build directory
+/.next-build/
